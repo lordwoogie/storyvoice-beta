@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StoryVoice — Hear Their Voice, Any Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FDF6EE;
+  --bg-card: #FFFFFF;
+  --text: #2D1B0E;
+  --text-muted: #7A6B5D;
+  --accent: #E8734A;
+  --accent-hover: #D4612E;
+  --accent-soft: #FDE8D8;
+  --teal: #2A9D8F;
+  --teal-soft: #D4F0EB;
+  --purple: #7B61C1;
+  --purple-soft: #EDE7F6;
+  --border: #E8DDD0;
+  --shadow: 0 2px 16px rgba(45,27,14,0.06);
+  --shadow-lg: 0 8px 40px rgba(45,27,14,0.10);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== NAV ===== */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.logo {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 18px;
+}
+.nav-status {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: var(--accent-soft);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* ===== LAYOUT ===== */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px 60px;
+}
+
+/* ===== API KEY SETUP ===== */
+.setup-banner {
+  background: linear-gradient(135deg, #FFF7E6 0%, #FDE8D8 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.setup-banner .icon { font-size: 2rem; }
+.setup-banner .info { flex: 1; min-width: 200px; }
+.setup-banner .info h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+.setup-banner .info p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.api-input-wrap {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.api-input-wrap input {
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  width: 280px;
+  background: white;
+  outline: none;
+  transition: border 0.2s;
+}
+.api-input-wrap input:focus {
+  border-color: var(--accent);
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 10px 22px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-secondary {
+  background: white;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: #F5EDE4; }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: #238B7E; }
+
+/* ===== STEPS ===== */
+.steps {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  transition: all 0.3s;
+}
+.step.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px rgba(232,115,74,0.3);
+}
+.step.completed {
+  background: var(--teal-soft);
+  color: var(--teal);
+  border-color: var(--teal);
+}
+.step-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700;
+}
+.step.active .step-num { background: rgba(255,255,255,0.25); }
+.step.completed .step-num { background: var(--teal); color: white; }
+
+/* ===== PANELS ===== */
+.panel {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+.panel.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== VOICE RECORDING ===== */
+.record-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 40px;
+  box-shadow: var(--shadow);
+  max-width: 700px;
+}
+.record-card h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+.record-card .subtitle {
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.prompt-box {
+  background: #FEFAF5;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 24px;
+  margin-bottom: 28px;
+  font-family: 'Fraunces', serif;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text);
+  font-style: italic;
+}
+.prompt-box .label {
+  font-family: 'DM Sans', sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: block;
+}
+.record-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.btn-record {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 4px solid var(--accent-soft);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  position: relative;
+}
+.btn-record:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(232,115,74,0.35); }
+.btn-record.recording {
+  background: #DC3545;
+  border-color: #F8D7DA;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220,53,69,0.3); }
+  50% { box-shadow: 0 0 0 16px rgba(220,53,69,0); }
+}
+.btn-record .dot {
+  width: 20px; height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+.btn-record.recording .dot {
+  border-radius: 4px;
+  width: 16px; height: 16px;
+}
+.record-timer {
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  min-width: 60px;
+}
+.record-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.audio-preview {
+  margin-top: 20px;
+  display: none;
+}
+.audio-preview.visible { display: block; }
+.audio-preview audio { width: 100%; border-radius: 8px; }
+
+.clone-status {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  display: none;
+}
+.clone-status.visible { display: flex; align-items: center; gap: 10px; }
+.clone-status.loading { background: #FFF3CD; color: #856404; }
+.clone-status.success { background: var(--teal-soft); color: #1B7A6E; }
+.clone-status.error { background: #F8D7DA; color: #842029; }
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(0,0,0,0.15);
+  border-top-color: #856404;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== BOOK LIBRARY ===== */
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+.book-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all 0.25s;
+  border: 2px solid transparent;
+}
+.book-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+}
+.book-cover {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.book-cover::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  height: 40px;
+  background: linear-gradient(transparent, rgba(255,255,255,0.6));
+}
+.book-info {
+  padding: 16px;
+}
+.book-info h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+.book-info .author {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.book-info .pages {
+  font-size: 0.75rem;
+  color: var(--teal);
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* ===== READER ===== */
+.reader-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  max-width: 700px;
+  overflow: hidden;
+}
+.reader-header {
+  padding: 24px 32px;
+  background: linear-gradient(135deg, #2D1B0E 0%, #4A2E1A 100%);
+  color: white;
+}
+.reader-header h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.3rem;
+}
+.reader-header .reader-author {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+.reader-voice-badge {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.12);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+.reader-body {
+  padding: 32px;
+}
+.page-illustration {
+  width: 100%;
+  height: 220px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  position: relative;
+  overflow: hidden;
+}
+.page-illustration .scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 4rem;
+  animation: sceneIn 0.5s ease;
+}
+@keyframes sceneIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+.page-illustration .scene-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  font-size: 8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: blur(2px);
+}
+.reader-page-text {
+  font-family: 'Fraunces', serif;
+  font-size: 1.15rem;
+  line-height: 2;
+  color: var(--text);
+  margin-bottom: 28px;
+  min-height: 160px;
+}
+.reader-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.page-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.page-indicator {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.reader-audio-status {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+  nav { padding: 16px 20px; }
+  .container { padding: 0 20px 40px; }
+  .steps { flex-wrap: wrap; }
+  .record-card, .reader-card { padding: 24px; }
+  .reader-body { padding: 24px; }
+  .record-card h2 { font-size: 1.3rem; }
+  .library-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .setup-banner { flex-direction: column; align-items: flex-start; }
+  .api-input-wrap input { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="logo-icon">📖</div>
+    StoryVoice
+  </div>
+  <div class="nav-status">BETA</div>
+</nav>
+
+<div class="container">
+  <!-- Access Code Gate -->
+  <div class="setup-banner" id="setupBanner">
+    <div class="icon">🔒</div>
+    <div class="info">
+      <h3>Enter Access Code</h3>
+      <p>Enter the code you received to start using StoryVoice.</p>
+    </div>
+    <div class="api-input-wrap">
+      <input type="text" id="accessCodeInput" placeholder="Enter access code...">
+      <button class="btn btn-primary" onclick="saveAccessCode()">Enter</button>
+    </div>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active" id="step1" onclick="goToStep(1)">
+      <div class="step-num">1</div>
+      Record Voice
+    </div>
+    <div class="step" id="step2" onclick="goToStep(2)">
+      <div class="step-num">2</div>
+      Pick a Story
+    </div>
+    <div class="step" id="step3" onclick="goToStep(3)">
+      <div class="step-num">3</div>
+      Listen
+    </div>
+  </div>
+
+  <!-- PANEL 1: Voice Recording -->
+  <div class="panel active" id="panel1">
+    <div class="record-card">
+      <h2>Create a Voice Profile</h2>
+      <p class="subtitle">Read the passage below out loud in a warm, storytelling voice. This takes about 60 seconds and gives us enough to clone the voice for any story.</p>
+
+      <div class="prompt-box">
+        <span class="label">Read this aloud:</span>
+        The sun was setting behind the old oak tree, painting the sky in shades of orange and gold. A little rabbit peeked out from behind a mushroom, wiggling its nose at the evening breeze. "What a beautiful night for an adventure," whispered the wind through the leaves. Down by the creek, three tiny frogs were singing their favorite song, while a wise old owl watched from high above. "Every story begins with a single step," the owl said softly, "and every voice carries a little bit of magic." The stars began to twinkle one by one, like tiny lanterns lighting the way home.
+      </div>
+
+      <div class="record-controls">
+        <button class="btn-record" id="recordBtn" onclick="toggleRecording()">
+          <div class="dot"></div>
+        </button>
+        <div class="record-timer" id="timer">0:00</div>
+        <div class="record-hint" id="recordHint">Tap to start recording</div>
+      </div>
+
+      <div class="audio-preview" id="audioPreview">
+        <audio id="audioPlayback" controls></audio>
+        <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn btn-secondary" onclick="resetRecording()">Re-record</button>
+          <button class="btn btn-primary" id="cloneBtn" onclick="createVoiceClone()">✨ Create Voice Clone</button>
+        </div>
+      </div>
+
+      <div class="clone-status" id="cloneStatus">
+        <div class="spinner"></div>
+        <span id="cloneStatusText"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 2: Book Library -->
+  <div class="panel" id="panel2">
+    <div style="margin-bottom: 24px;">
+      <h2 style="font-family:'Fraunces',serif; font-size:1.6rem; margin-bottom:6px;">Pick a Story</h2>
+      <p style="color:var(--text-muted); font-size:0.95rem;">Choose from our library or scan a page from any book you own.</p>
+    </div>
+
+    <!-- Scan a Book Card -->
+    <div style="background: linear-gradient(135deg, var(--purple-soft) 0%, #F3E8FF 100%); border: 2px dashed var(--purple); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 28px; cursor: pointer; transition: all 0.2s;" onclick="goToStep(4)" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+      <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <div style="font-size: 2.5rem;">📸</div>
+        <div style="flex:1; min-width: 200px;">
+          <div style="font-family:'Fraunces',serif; font-size: 1.1rem; font-weight: 700; color: var(--purple); margin-bottom: 4px;">Scan Any Book You Own</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">Point your camera at a page and hear it read in your cloned voice. Works with any children's book!</div>
+        </div>
+        <div class="btn" style="background: var(--purple); color: white;">Open Scanner →</div>
+      </div>
+    </div>
+
+    <div style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 14px;">Or choose from the library</div>
+    <div class="library-grid" id="libraryGrid"></div>
+  </div>
+
+  <!-- PANEL 4: OCR Scanner -->
+  <div class="panel" id="panel4">
+    <div style="margin-bottom:16px;">
+      <button class="btn btn-secondary" onclick="goToStep(2)">← Back to Library</button>
+    </div>
+    <div class="record-card" style="max-width:700px;">
+      <h2>Scan a Book Page</h2>
+      <p class="subtitle">Take a photo of any children's book page. We'll extract the text and read it aloud in your cloned voice.</p>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px; border: 2px dashed var(--border); border-radius: var(--radius-sm); cursor: pointer; background: #FEFAF5; transition: all 0.2s;" id="scanDropZone">
+          <div style="font-size: 3rem;">📷</div>
+          <div style="font-weight: 600; color: var(--text);">Tap to take a photo or upload an image</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">JPG, PNG — clear, well-lit photos work best</div>
+          <input type="file" accept="image/*" capture="environment" id="scanInput" style="display:none;" onchange="handleScanImage(event)">
+        </label>
+      </div>
+
+      <div id="scanPreview" style="display:none; margin-bottom: 20px;">
+        <img id="scanImage" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 12px;">
+        <div class="clone-status visible loading" id="scanStatus">
+          <div class="spinner"></div>
+          <span id="scanStatusText">Reading the page...</span>
+        </div>
+      </div>
+
+      <div id="scanResult" style="display:none;">
+        <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 8px;">Extracted Text</div>
+        <div id="scanText" contenteditable="true" style="background: #FEFAF5; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; font-family: 'Fraunces', serif; font-size: 1.05rem; line-height: 1.8; min-height: 100px; margin-bottom: 16px; outline: none;"></div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">You can edit the text above if the scan missed anything.</div>
+        <button class="btn btn-teal" onclick="readScannedText()" id="readScanBtn">▶ Read This Page Aloud</button>
+        <div class="reader-audio-status" id="scanAudioStatus" style="margin-top:12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 3: Reader -->
+  <div class="panel" id="panel3">
+    <div style="margin-bottom:16px;">
+      <button class="btn btn-secondary" onclick="goToStep(2)">← Back to Library</button>
+    </div>
+    <div class="reader-card">
+      <div class="reader-header">
+        <h2 id="readerTitle"></h2>
+        <div class="reader-author" id="readerAuthor"></div>
+        <div class="reader-voice-badge">🎙️ <span id="readerVoiceName">Your Voice</span></div>
+      </div>
+      <div class="reader-body">
+        <div class="page-illustration" id="pageIllustration"></div>
+        <div class="reader-page-text" id="readerText"></div>
+        <div class="reader-controls">
+          <div class="page-nav">
+            <button class="btn btn-secondary" id="prevBtn" onclick="prevPage()">← Prev</button>
+            <span class="page-indicator" id="pageIndicator">Page 1 of 5</span>
+            <button class="btn btn-secondary" id="nextBtn" onclick="nextPage()">Next →</button>
+          </div>
+          <div>
+            <button class="btn btn-teal" id="playPageBtn" onclick="playCurrentPage()">▶ Read This Page</button>
+          </div>
+        </div>
+        <div class="reader-audio-status" id="audioStatus" style="margin-top:16px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== STATE =====
+let accessCode = localStorage.getItem('sv_access_code') || '';
+let voiceId = localStorage.getItem('sv_voice_id') || '';
+let voiceName = localStorage.getItem('sv_voice_name') || '';
+let mediaRecorder = null;
+let audioChunks = [];
+let recordingInterval = null;
+let seconds = 0;
+let currentBook = null;
+let currentPage = 0;
+let currentAudio = null;
+
+// ===== PUBLIC DOMAIN BOOK LIBRARY =====
+const books = [
+  {
+    id: 'tortoise-hare',
+    title: 'The Tortoise and the Hare',
+    author: 'Aesop',
+    emoji: '🐢',
+    color: '#E8F5E9',
+    illustrations: [
+      { bg: '#E8F5E9', emojis: '🐢  🐇', bgEmoji: '🌳' },
+      { bg: '#FFF8E1', emojis: '🐇 💬 🐢', bgEmoji: '☀️' },
+      { bg: '#E8F5E9', emojis: '🦊 🏁 🐇💨', bgEmoji: '🌲' },
+      { bg: '#FFF3E0', emojis: '🐇😴 🌳  🐢🚶', bgEmoji: '🍃' },
+      { bg: '#FFF8E1', emojis: '🏁 🐢🏆 😮🐇', bgEmoji: '🎉' },
+      { bg: '#E8F5E9', emojis: '🎊 🐢👑 🐇😔', bgEmoji: '⭐' },
+    ],
+    pages: [
+      "Once upon a time, there was a speedy hare who loved to boast about how fast he could run. He would laugh at the slow tortoise, who plodded along with his heavy shell on his back.",
+      "\"You are so slow!\" the hare teased one sunny morning. \"I bet you could never beat me in a race.\" The tortoise looked up calmly and said, \"I accept your challenge. Let us race.\"",
+      "The fox agreed to be the judge. \"Ready, set, go!\" he called. The hare sprinted ahead so fast he was out of sight in seconds. The tortoise just smiled and began to walk, one steady step at a time.",
+      "The hare was so far ahead that he decided to take a nap under a shady tree. \"I have plenty of time,\" he yawned. Meanwhile, the tortoise kept walking. Step by step. Slow and steady.",
+      "When the hare woke up, he looked around and stretched. Then he heard cheering! He ran as fast as he could, but it was too late. The tortoise had already crossed the finish line.",
+      "All the animals cheered for the tortoise. The hare hung his head in shame. And the tortoise simply said, \"Slow and steady wins the race.\" And from that day on, the hare never boasted again."
+    ]
+  },
+  {
+    id: 'ugly-duckling',
+    title: 'The Ugly Duckling',
+    author: 'Hans Christian Andersen',
+    emoji: '🦢',
+    color: '#E3F2FD',
+    illustrations: [
+      { bg: '#E3F2FD', emojis: '🦆 🥚🥚🥚🥚', bgEmoji: '🌾' },
+      { bg: '#F3E5F5', emojis: '🐣🐣🐣 🐥😢', bgEmoji: '🏡' },
+      { bg: '#FCE4EC', emojis: '🐔😤 🐥😢 🦆', bgEmoji: '💧' },
+      { bg: '#E3F2FD', emojis: '🐥🌧️ ❄️🥶', bgEmoji: '🌨️' },
+      { bg: '#E8F5E9', emojis: '☀️🌸 🦢🦢🦢', bgEmoji: '🌊' },
+      { bg: '#E3F2FD', emojis: '🦢✨ 💕🦢🦢', bgEmoji: '🌅' },
+    ],
+    pages: [
+      "On a beautiful farm, a mother duck sat on her nest, waiting for her eggs to hatch. One by one, the little ducklings popped out. They were fluffy and yellow and adorable. But the last egg was bigger than the rest.",
+      "When the last egg finally cracked open, out tumbled a duckling that looked very different. He was gray and awkward, with big clumsy feet. \"What a funny-looking duckling,\" the other animals whispered.",
+      "The poor little duckling felt very sad. Nobody wanted to play with him. The chickens pecked at him. The other ducklings waddled away. Even his own brothers and sisters called him ugly.",
+      "So the little duckling ran away. He wandered through meadows and marshes, through rain and wind. He spent a cold, lonely winter hiding in the reeds by a frozen pond, wondering if he would ever find a home.",
+      "When spring finally came, the duckling stretched his wings. They were big and strong now. He flew to a beautiful lake and saw the most magnificent birds gliding across the water. They were swans!",
+      "The duckling looked down at his own reflection in the water and could not believe his eyes. He was not an ugly duckling at all. He had grown into a beautiful white swan! The other swans welcomed him, and he was never lonely again."
+    ]
+  },
+  {
+    id: 'three-bears',
+    title: 'Goldilocks and the Three Bears',
+    author: 'Robert Southey',
+    emoji: '🐻',
+    color: '#FFF8E1',
+    illustrations: [
+      { bg: '#FFF8E1', emojis: '🐻🐻🐻 🏠', bgEmoji: '🌲' },
+      { bg: '#FFF3E0', emojis: '🐻🐻🐻🚶 👧🏼', bgEmoji: '🌳' },
+      { bg: '#FFF8E1', emojis: '👧🏼🥣 😋', bgEmoji: '🍯' },
+      { bg: '#FCE4EC', emojis: '👧🏼🪑 💥', bgEmoji: '🏠' },
+      { bg: '#E3F2FD', emojis: '👧🏼🛏️😴', bgEmoji: '💤' },
+      { bg: '#FFF8E1', emojis: '🐻🐻🐻😱 👧🏼🏃‍♀️', bgEmoji: '🚪' },
+    ],
+    pages: [
+      "Once upon a time, three bears lived in a cozy little house in the woods. There was great big Papa Bear, middle-sized Mama Bear, and tiny little Baby Bear. One morning, they made porridge for breakfast.",
+      "\"This porridge is too hot!\" said Papa Bear. \"Let us go for a walk while it cools down.\" So the three bears went out into the forest. While they were gone, a little girl named Goldilocks came skipping by.",
+      "She peeked through the window, and when nobody answered the door, she walked right in! She tried Papa Bear's porridge, but it was too hot. She tried Mama Bear's porridge, but it was too cold. Then she tried Baby Bear's porridge, and it was just right. She ate it all up!",
+      "Then Goldilocks felt tired. She tried Papa Bear's chair, but it was too hard. She tried Mama Bear's chair, but it was too soft. She tried Baby Bear's chair, and it was just right! But she sat down so hard that it broke into pieces!",
+      "Goldilocks went upstairs and found three beds. Papa Bear's bed was too hard. Mama Bear's bed was too soft. But Baby Bear's bed was just right, and she fell fast asleep.",
+      "When the three bears came home, they found their porridge eaten, their chair broken, and Goldilocks sleeping in Baby Bear's bed! Goldilocks woke up, saw the three bears, and ran out of the house as fast as she could. And she never went into a stranger's house again."
+    ]
+  },
+  {
+    id: 'lion-mouse',
+    title: 'The Lion and the Mouse',
+    author: 'Aesop',
+    emoji: '🦁',
+    color: '#FFF3E0',
+    illustrations: [
+      { bg: '#FFF3E0', emojis: '🦁😴 🐭', bgEmoji: '🌿' },
+      { bg: '#FFF8E1', emojis: '🐭🙏 🦁😏', bgEmoji: '☀️' },
+      { bg: '#FCE4EC', emojis: '🦁😰 🪢', bgEmoji: '🌲' },
+      { bg: '#FFF3E0', emojis: '🐭✂️ 🪢🦁', bgEmoji: '🌟' },
+      { bg: '#E8F5E9', emojis: '🦁😊 🐭💪', bgEmoji: '🌳' },
+      { bg: '#FFF8E1', emojis: '🦁❤️🐭', bgEmoji: '🌅' },
+    ],
+    pages: [
+      "A mighty lion was sleeping peacefully in his den when a tiny mouse accidentally ran across his paw. The lion woke up with a roar and caught the little mouse in his giant paw.",
+      "\"Please, great lion, let me go!\" squeaked the mouse. \"If you spare my life, I promise I will help you one day.\" The lion laughed at the idea of such a tiny creature helping him, but he let the mouse go.",
+      "Many days later, the lion was walking through the forest when he stepped into a hunter's trap. A strong net fell over him, and no matter how hard he pulled and roared, he could not break free.",
+      "The little mouse heard the lion's roars and came running. \"Hold still, dear lion!\" she said. And with her tiny, sharp teeth, she began to chew through the ropes of the net, one strand at a time.",
+      "After a long while, the mouse chewed through enough ropes for the lion to break free. The lion looked down at the tiny mouse with great respect and gratitude in his eyes.",
+      "\"You were right, little mouse,\" said the lion gently. \"Even the smallest friend can be the greatest help.\" And from that day forward, the lion and the mouse were the very best of friends."
+    ]
+  },
+  {
+    id: 'jack-beanstalk',
+    title: 'Jack and the Beanstalk',
+    author: 'English Fairy Tale',
+    emoji: '🌱',
+    color: '#E8F5E9',
+    illustrations: [
+      { bg: '#FFF8E1', emojis: '👦🐄 🏚️', bgEmoji: '🌾' },
+      { bg: '#F3E5F5', emojis: '👴✨ 🫘🫘🫘', bgEmoji: '🛤️' },
+      { bg: '#E8F5E9', emojis: '🌱☁️☁️ 👦⬆️', bgEmoji: '🌿' },
+      { bg: '#E3F2FD', emojis: '🏰 🐔🥚✨ 🎵', bgEmoji: '☁️' },
+      { bg: '#FCE4EC', emojis: '👦🏃 👹😡', bgEmoji: '🌱' },
+      { bg: '#FFF8E1', emojis: '🪓🌱💥 👦👩🐔🥚', bgEmoji: '🎉' },
+    ],
+    pages: [
+      "Jack and his mother were very poor. All they had was one old cow. One day, his mother said, \"Jack, take the cow to market and sell her so we can buy food.\" So Jack set off down the road.",
+      "On the way, Jack met a strange old man who offered him five magic beans for the cow. Jack thought they were wonderful and traded right away. When he got home, his mother was furious and threw the beans out the window.",
+      "The next morning, Jack woke up to find an enormous beanstalk growing right outside his window. It stretched up, up, up into the clouds! Jack began to climb, higher and higher, until he reached a land above the sky.",
+      "At the top, Jack found a giant castle. Inside lived a fearsome giant and his wife. Jack snuck in and found a hen that laid golden eggs and a magical golden harp that played beautiful music all by itself.",
+      "Jack grabbed the hen and the harp and ran for the beanstalk. But the giant saw him! \"Fee-fi-fo-fum!\" the giant roared, and he chased Jack to the beanstalk and started climbing down after him.",
+      "Jack climbed down as fast as he could and shouted, \"Mother, bring the axe!\" As soon as Jack reached the ground, he chopped down the beanstalk. The giant tumbled away, and Jack and his mother lived happily ever after with their golden hen."
+    ]
+  },
+  {
+    id: 'boy-who-cried-wolf',
+    title: 'The Boy Who Cried Wolf',
+    author: 'Aesop',
+    emoji: '🐺',
+    color: '#F3E5F5',
+    illustrations: [
+      { bg: '#E8F5E9', emojis: '👦😑 🐑🐑🐑', bgEmoji: '⛰️' },
+      { bg: '#FFF8E1', emojis: '👦📢 🐺❌ 🏃🏃', bgEmoji: '🏘️' },
+      { bg: '#FFF3E0', emojis: '👦🤣 📢 🐺❌', bgEmoji: '😤' },
+      { bg: '#F3E5F5', emojis: '🐺😈 🐑🐑 👦😱', bgEmoji: '🌙' },
+      { bg: '#FCE4EC', emojis: '👦📢😭 🏘️🚫', bgEmoji: '🐺' },
+      { bg: '#E3F2FD', emojis: '👦😢 💭💡', bgEmoji: '⭐' },
+    ],
+    pages: [
+      "There was once a shepherd boy who watched over the village sheep on a hillside. The boy was bored. He had nothing to do all day but sit and watch the fluffy white sheep munch on grass.",
+      "So one day, just for fun, the boy ran down the hill and shouted, \"Wolf! Wolf! A wolf is chasing the sheep!\" The villagers came running up the hill to help, but there was no wolf. The boy laughed and laughed.",
+      "A few days later, the boy did it again. \"Wolf! Wolf!\" he cried. Again the villagers came running, and again there was no wolf. The boy thought this was the funniest trick in the world.",
+      "But then one evening, a real wolf crept out of the forest and began chasing the sheep. The boy was terrified. He ran down the hill screaming, \"Wolf! Wolf! Please help! There is a real wolf this time!\"",
+      "But this time, nobody came. The villagers thought it was just another trick. \"He is lying again,\" they said, and they stayed in their homes. The wolf scattered the sheep and disappeared into the forest.",
+      "The boy sat alone on the hillside, crying. He had learned a very important lesson. Nobody believes a liar, even when they are telling the truth. And from that day on, the boy never told another lie."
+    ]
+  },
+  {
+    id: 'three-little-pigs',
+    title: 'The Three Little Pigs',
+    author: 'English Fairy Tale',
+    emoji: '🐷',
+    color: '#FCE4EC',
+    illustrations: [
+      { bg: '#FCE4EC', emojis: '🐷🐷🐷 👋🐖', bgEmoji: '🏡' },
+      { bg: '#FFF8E1', emojis: '🐷🌾 🏚️', bgEmoji: '☀️' },
+      { bg: '#FFF3E0', emojis: '🐷🪵 🏠', bgEmoji: '🌲' },
+      { bg: '#E3F2FD', emojis: '🐷🧱 🏗️', bgEmoji: '💪' },
+      { bg: '#FCE4EC', emojis: '🐺💨 🏚️💥 🏠💥', bgEmoji: '😱' },
+      { bg: '#E8F5E9', emojis: '🧱🏠 🐺😤 🐷🐷🐷🎉', bgEmoji: '⭐' },
+    ],
+    pages: [
+      "Once upon a time, there were three little pigs who lived with their mother. One day, she said, \"You are all grown up now. It is time for you to go out into the world and build your own houses.\" So the three little pigs set off on their way.",
+      "The first little pig was lazy. He built his house out of straw because it was the easiest thing to do. \"This will be good enough!\" he said, and he spent the rest of the day playing in the sunshine.",
+      "The second little pig worked a little harder. He built his house out of sticks. It took a bit longer, but he was happy with it. \"Nice and sturdy!\" he said, and went off to play with his brother.",
+      "The third little pig was the wisest. He worked very hard and built his house out of bricks. It took him a long time, but when he was done, he had the strongest house of all.",
+      "Then along came a big bad wolf. He went to the straw house and said, \"Little pig, little pig, let me come in!\" The pig said no, so the wolf huffed and puffed and blew the house down! He did the same to the stick house! Both pigs ran to their brother's brick house.",
+      "The wolf tried to blow down the brick house, but no matter how hard he huffed and puffed, it would not fall down. He tried to sneak in through the chimney, but the pigs had a pot of hot water waiting! The wolf ran away and never came back, and the three little pigs lived happily ever after."
+    ]
+  },
+  {
+    id: 'little-red-riding-hood',
+    title: 'Little Red Riding Hood',
+    author: 'Brothers Grimm',
+    emoji: '🧒',
+    color: '#FFEBEE',
+    illustrations: [
+      { bg: '#FFEBEE', emojis: '👧🧣 🧺 👵', bgEmoji: '🌸' },
+      { bg: '#E8F5E9', emojis: '👧🌲🌲 🐺👀', bgEmoji: '🌳' },
+      { bg: '#FFF8E1', emojis: '🐺🏃💨 🏠👵', bgEmoji: '🌲' },
+      { bg: '#F3E5F5', emojis: '👧🚪 🐺🛏️', bgEmoji: '😨' },
+      { bg: '#FFEBEE', emojis: '👧😱 🐺😈', bgEmoji: '❗' },
+      { bg: '#E8F5E9', emojis: '🪓🦸 👧👵🎉', bgEmoji: '⭐' },
+    ],
+    pages: [
+      "Once upon a time, there was a sweet little girl who always wore a red riding hood. Everyone called her Little Red Riding Hood. One day, her mother said, \"Take this basket of goodies to your grandmother. She is not feeling well. And remember, stay on the path through the woods!\"",
+      "Little Red Riding Hood skipped into the forest, singing a happy song. But hidden behind the trees, a sly wolf was watching her. \"Where are you going, little girl?\" he asked with a toothy grin. \"To my grandmother's house,\" she replied. The wolf smiled and hurried ahead.",
+      "The wolf ran to Grandmother's house and knocked on the door. \"Come in, dear!\" called Grandmother. The wolf rushed in, locked Grandmother in the closet, put on her nightgown and cap, and climbed into her bed to wait.",
+      "When Little Red Riding Hood arrived, she went to the bed. \"Grandmother, what big eyes you have!\" she said. \"All the better to see you with, my dear,\" said the wolf. \"What big ears you have!\" \"All the better to hear you with.\"",
+      "\"And Grandmother, what big teeth you have!\" cried Little Red Riding Hood. \"All the better to eat you with!\" growled the wolf, and he leaped out of the bed! Little Red Riding Hood screamed as loud as she could.",
+      "A brave woodcutter heard her cries and burst through the door. He chased the wolf far away into the forest. He found Grandmother safe in the closet, and everyone was so happy and relieved. Little Red Riding Hood promised to always stay on the path."
+    ]
+  },
+  {
+    id: 'ant-grasshopper',
+    title: 'The Ant and the Grasshopper',
+    author: 'Aesop',
+    emoji: '🦗',
+    color: '#E8F5E9',
+    illustrations: [
+      { bg: '#E8F5E9', emojis: '☀️🌻 🐜 🦗🎵', bgEmoji: '🌿' },
+      { bg: '#FFF8E1', emojis: '🐜💪🌾 🦗🎶😎', bgEmoji: '☀️' },
+      { bg: '#FFF3E0', emojis: '🐜🏠🌾🌾 🦗💃', bgEmoji: '🍂' },
+      { bg: '#E3F2FD', emojis: '❄️🌨️ 🦗🥶', bgEmoji: '⛄' },
+      { bg: '#FFF8E1', emojis: '🦗🚪😢 🐜🏠🌾', bgEmoji: '❄️' },
+      { bg: '#E8F5E9', emojis: '🐜🦗🤝 🏠☕', bgEmoji: '❤️' },
+    ],
+    pages: [
+      "On a warm summer day, a little ant was working very hard, carrying pieces of grain back to his home. Nearby, a grasshopper sat on a leaf, playing his fiddle and singing happy songs in the sunshine.",
+      "\"Why do you work so hard?\" laughed the grasshopper. \"Come and play with me! The sun is shining and the days are long!\" But the ant shook his head. \"I am storing food for winter. You should do the same, my friend.\"",
+      "The grasshopper just laughed. \"Winter is so far away! There is plenty of time to worry about that later.\" And so the grasshopper kept singing and dancing while the ant kept working, day after day, carrying grain home.",
+      "Then the cold winds came. Snow covered the ground. The fields were bare and there was nothing to eat. The grasshopper wandered around, cold and hungry, wishing he had listened to the ant.",
+      "Finally, the grasshopper knocked on the ant's door, shivering and thin. \"Please, friend, do you have any food to share? I am so hungry.\" The ant looked at the grasshopper and felt sorry for him.",
+      "The kind ant invited the grasshopper inside, shared his warm food, and gave him a place by the fire. \"Next summer,\" the ant said gently, \"we will work together.\" The grasshopper nodded and promised he would never waste another summer day."
+    ]
+  },
+  {
+    id: 'emperors-new-clothes',
+    title: "The Emperor's New Clothes",
+    author: 'Hans Christian Andersen',
+    emoji: '👑',
+    color: '#FFF8E1',
+    illustrations: [
+      { bg: '#FFF8E1', emojis: '👑🤴 👔👗👘', bgEmoji: '🏰' },
+      { bg: '#F3E5F5', emojis: '🧵✨ 🤥🤥', bgEmoji: '🪄' },
+      { bg: '#FFF3E0', emojis: '🤴👀 🧵❓', bgEmoji: '😰' },
+      { bg: '#E3F2FD', emojis: '👥👀 😬🤫', bgEmoji: '🏰' },
+      { bg: '#FFF8E1', emojis: '🤴🚶 👥😳', bgEmoji: '🎭' },
+      { bg: '#FFEBEE', emojis: '👦📢 🤴😳 👥🤣', bgEmoji: '💡' },
+    ],
+    pages: [
+      "There once lived an emperor who loved new clothes more than anything in the world. He spent all his money on the finest outfits and paraded through the streets every day in something new.",
+      "One day, two clever tricksters came to town. \"We can weave the most magnificent cloth in the world!\" they said. \"But it has a special power: anyone who is foolish or unfit for their job will not be able to see it.\"",
+      "The emperor paid them a fortune. The tricksters set up their looms and pretended to weave, but there was nothing there at all! When the emperor went to check, he saw empty looms, but he was too afraid to say so. \"How wonderful!\" he declared.",
+      "His ministers came to look too. They also saw nothing, but nobody wanted to seem foolish. \"Magnificent!\" they all said, nodding and pointing at the empty looms. \"The finest fabric we have ever seen!\"",
+      "The tricksters pretended to dress the emperor in his new clothes. He stood before his mirror wearing nothing at all, but everyone in the room praised how beautiful he looked. Then the emperor marched out for a grand parade through the city.",
+      "The crowds cheered politely, nobody wanting to admit they could see nothing. Then a small child tugged his mother's hand and shouted, \"But he has nothing on!\" Soon everyone was whispering, then laughing. The emperor turned bright red, but he held his head high and walked all the way home, having learned a lesson about honesty."
+    ]
+  }
+];
+
+// ===== INIT =====
+window.onload = function() {
+  if (accessCode) {
+    document.getElementById('setupBanner').style.display = 'none';
+  }
+  if (voiceId) {
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step1').classList.add('completed');
+    document.getElementById('step2').classList.add('active');
+    document.getElementById('panel1').classList.remove('active');
+    document.getElementById('panel2').classList.add('active');
+  }
+  renderLibrary();
+};
+
+// ===== ACCESS CODE =====
+function saveAccessCode() {
+  const raw = document.getElementById('accessCodeInput').value;
+  const code = raw.replace(/[^\x20-\x7E]/g, '').trim();
+  if (!code) return;
+  accessCode = code;
+  localStorage.setItem('sv_access_code', code);
+  document.getElementById('setupBanner').style.display = 'none';
+}
+
+// ===== NAVIGATION =====
+function goToStep(n) {
+  if (n === 2 && !voiceId) return;
+  if (n === 3 && !currentBook) return;
+  if (n === 4 && !voiceId) return;
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('panel' + n).classList.add('active');
+  // Panel 4 (scanner) shares step 2 highlight
+  const stepN = n === 4 ? 2 : n;
+  document.getElementById('step' + stepN).classList.add('active');
+  for (let i = 1; i < stepN; i++) {
+    document.getElementById('step' + i).classList.add('completed');
+  }
+}
+
+// ===== RECORDING =====
+async function toggleRecording() {
+  const btn = document.getElementById('recordBtn');
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    btn.classList.remove('recording');
+    document.getElementById('recordHint').textContent = 'Recording complete!';
+    clearInterval(recordingInterval);
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    seconds = 0;
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const url = URL.createObjectURL(blob);
+      document.getElementById('audioPlayback').src = url;
+      document.getElementById('audioPreview').classList.add('visible');
+    };
+    mediaRecorder.start();
+    btn.classList.add('recording');
+    document.getElementById('recordHint').textContent = 'Tap to stop';
+    document.getElementById('audioPreview').classList.remove('visible');
+    recordingInterval = setInterval(() => {
+      seconds++;
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      document.getElementById('timer').textContent = m + ':' + String(s).padStart(2, '0');
+    }, 1000);
+  } catch(err) {
+    alert('Could not access microphone. Please allow microphone permissions.');
+  }
+}
+
+function resetRecording() {
+  document.getElementById('audioPreview').classList.remove('visible');
+  document.getElementById('timer').textContent = '0:00';
+  document.getElementById('recordHint').textContent = 'Tap to start recording';
+  seconds = 0;
+  audioChunks = [];
+}
+
+// ===== VOICE CLONING =====
+async function createVoiceClone() {
+  if (!accessCode) {
+    alert('Please enter your access code first.');
+    return;
+  }
+  if (audioChunks.length === 0) return;
+
+  const status = document.getElementById('cloneStatus');
+  const statusText = document.getElementById('cloneStatusText');
+  const cloneBtn = document.getElementById('cloneBtn');
+
+  status.className = 'clone-status visible loading';
+  statusText.textContent = 'Creating your voice clone... This takes about 30 seconds.';
+  cloneBtn.disabled = true;
+
+  try {
+    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+    const formData = new FormData();
+    const name = 'StoryVoice_' + Date.now();
+    formData.append('name', name);
+    formData.append('description', 'Voice clone created via StoryVoice app');
+    formData.append('files', blob, 'recording.webm');
+
+    const resp = await fetch('/api/clone', {
+      method: 'POST',
+      headers: { 'x-access-code': accessCode },
+      body: formData
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ error: 'Voice cloning failed (status ' + resp.status + ')' }));
+      throw new Error(err.detail?.message || err.error || 'Voice cloning failed.');
+    }
+
+    const data = await resp.json().catch(() => null);
+    if (!data || !data.voice_id) {
+      throw new Error('Unexpected response from server. Please try again.');
+    }
+    voiceId = data.voice_id;
+    voiceName = name;
+    localStorage.setItem('sv_voice_id', voiceId);
+    localStorage.setItem('sv_voice_name', voiceName);
+
+    status.className = 'clone-status visible success';
+    statusText.textContent = 'Voice clone created! You can now listen to stories in your voice.';
+
+    setTimeout(() => goToStep(2), 1500);
+
+  } catch(err) {
+    status.className = 'clone-status visible error';
+    statusText.textContent = 'Error: ' + err.message;
+    cloneBtn.disabled = false;
+  }
+}
+
+// ===== LIBRARY =====
+function renderLibrary() {
+  const grid = document.getElementById('libraryGrid');
+  grid.innerHTML = books.map(b => `
+    <div class="book-card" onclick="selectBook('${b.id}')">
+      <div class="book-cover" style="background:${b.color}">${b.emoji}</div>
+      <div class="book-info">
+        <h3>${b.title}</h3>
+        <div class="author">${b.author}</div>
+        <div class="pages">${b.pages.length} pages</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectBook(id) {
+  currentBook = books.find(b => b.id === id);
+  currentPage = 0;
+  renderReader();
+  goToStep(3);
+}
+
+// ===== READER =====
+function renderReader() {
+  if (!currentBook) return;
+  document.getElementById('readerTitle').textContent = currentBook.title;
+  document.getElementById('readerAuthor').textContent = currentBook.author;
+  document.getElementById('readerText').textContent = currentBook.pages[currentPage];
+  document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${currentBook.pages.length}`;
+  document.getElementById('prevBtn').disabled = currentPage === 0;
+  document.getElementById('nextBtn').disabled = currentPage === currentBook.pages.length - 1;
+  document.getElementById('audioStatus').textContent = '';
+
+  // Render illustration
+  const illust = currentBook.illustrations[currentPage];
+  const illustEl = document.getElementById('pageIllustration');
+  if (illust) {
+    illustEl.style.background = illust.bg;
+    illustEl.innerHTML = `
+      <div class="scene-bg">${illust.bgEmoji}</div>
+      <div class="scene">${illust.emojis}</div>
+    `;
+  }
+}
+
+function prevPage() {
+  if (currentPage > 0) { currentPage--; stopAudio(); renderReader(); }
+}
+function nextPage() {
+  if (currentPage < currentBook.pages.length - 1) { currentPage++; stopAudio(); renderReader(); }
+}
+
+function stopAudio() {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+}
+
+async function playCurrentPage() {
+  if (!accessCode || !voiceId || !currentBook) return;
+
+  const btn = document.getElementById('playPageBtn');
+  const status = document.getElementById('audioStatus');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating...';
+  status.innerHTML = '<div class="spinner" style="border-top-color:var(--teal)"></div> Generating audio in your voice...';
+
+  try {
+    const text = currentBook.pages[currentPage];
+    const resp = await fetch('/api/speak', {
+      method: 'POST',
+      headers: {
+        'x-access-code': accessCode,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        voice_id: voiceId,
+        text: text,
+        model_id: 'eleven_multilingual_v2',
+        voice_settings: { stability: 0.6, similarity_boost: 0.85 }
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.detail?.message || err.error || 'Audio generation failed.');
+    }
+
+    const audioBlob = await resp.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    stopAudio();
+    currentAudio = new Audio(audioUrl);
+    currentAudio.play();
+    btn.textContent = '⏸ Playing...';
+    status.textContent = '🔊 Reading aloud in your voice...';
+
+    currentAudio.onended = () => {
+      btn.textContent = '▶ Read This Page';
+      btn.disabled = false;
+      status.textContent = '✓ Done! Tap Next for the next page.';
+    };
+
+  } catch(err) {
+    status.textContent = '❌ ' + err.message;
+    btn.textContent = '▶ Read This Page';
+    btn.disabled = false;
+  }
+}
+
+// ===== OCR SCANNER =====
+let tesseractLoaded = false;
+
+async function loadTesseract() {
+  if (tesseractLoaded) return;
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.5/tesseract.min.js';
+    script.onload = () => { tesseractLoaded = true; resolve(); };
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+async function handleScanImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Show preview
+  const preview = document.getElementById('scanPreview');
+  const img = document.getElementById('scanImage');
+  const result = document.getElementById('scanResult');
+  const status = document.getElementById('scanStatus');
+  const statusText = document.getElementById('scanStatusText');
+
+  preview.style.display = 'block';
+  result.style.display = 'none';
+  status.style.display = 'flex';
+  statusText.textContent = 'Loading OCR engine...';
+
+  const reader = new FileReader();
+  reader.onload = (e) => { img.src = e.target.result; };
+  reader.readAsDataURL(file);
+
+  try {
+    await loadTesseract();
+    statusText.textContent = 'Reading the page... This may take 10-20 seconds.';
+
+    const { data } = await Tesseract.recognize(file, 'eng', {
+      logger: m => {
+        if (m.status === 'recognizing text') {
+          const pct = Math.round((m.progress || 0) * 100);
+          statusText.textContent = 'Reading the page... ' + pct + '%';
+        }
+      }
+    });
+
+    const text = data.text.trim();
+    if (!text) {
+      status.className = 'clone-status visible error';
+      statusText.textContent = 'Could not read any text. Try a clearer, well-lit photo.';
+      return;
+    }
+
+    status.style.display = 'none';
+    result.style.display = 'block';
+    document.getElementById('scanText').textContent = text;
+
+  } catch (err) {
+    status.className = 'clone-status visible error';
+    statusText.textContent = 'OCR Error: ' + err.message;
+  }
+}
+
+async function readScannedText() {
+  if (!accessCode || !voiceId) return;
+
+  const text = document.getElementById('scanText').textContent.trim();
+  if (!text) return;
+
+  const btn = document.getElementById('readScanBtn');
+  const status = document.getElementById('scanAudioStatus');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating...';
+  status.innerHTML = '<div class="spinner" style="border-top-color:var(--teal)"></div> Generating audio in your voice...';
+
+  try {
+    const resp = await fetch('/api/speak', {
+      method: 'POST',
+      headers: {
+        'x-access-code': accessCode,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        voice_id: voiceId,
+        text: text,
+        model_id: 'eleven_multilingual_v2',
+        voice_settings: { stability: 0.6, similarity_boost: 0.85 }
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.detail?.message || err.error || 'Audio generation failed.');
+    }
+
+    const audioBlob = await resp.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    stopAudio();
+    currentAudio = new Audio(audioUrl);
+    currentAudio.play();
+    btn.textContent = '⏸ Playing...';
+    status.textContent = '🔊 Reading aloud in your voice...';
+
+    currentAudio.onended = () => {
+      btn.textContent = '▶ Read This Page Aloud';
+      btn.disabled = false;
+      status.textContent = '✓ Done! Scan another page or go back to the library.';
+    };
+
+  } catch(err) {
+    status.textContent = '❌ ' + err.message;
+    btn.textContent = '▶ Read This Page Aloud';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

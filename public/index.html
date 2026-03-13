@@ -568,9 +568,59 @@ nav {
   <div class="panel" id="panel2">
     <div style="margin-bottom: 24px;">
       <h2 style="font-family:'Fraunces',serif; font-size:1.6rem; margin-bottom:6px;">Pick a Story</h2>
-      <p style="color:var(--text-muted); font-size:0.95rem;">Choose a tale from our public domain library. Each will be read in your cloned voice.</p>
+      <p style="color:var(--text-muted); font-size:0.95rem;">Choose from our library or scan a page from any book you own.</p>
     </div>
+
+    <!-- Scan a Book Card -->
+    <div style="background: linear-gradient(135deg, var(--purple-soft) 0%, #F3E8FF 100%); border: 2px dashed var(--purple); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 28px; cursor: pointer; transition: all 0.2s;" onclick="goToStep(4)" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+      <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <div style="font-size: 2.5rem;">📸</div>
+        <div style="flex:1; min-width: 200px;">
+          <div style="font-family:'Fraunces',serif; font-size: 1.1rem; font-weight: 700; color: var(--purple); margin-bottom: 4px;">Scan Any Book You Own</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">Point your camera at a page and hear it read in your cloned voice. Works with any children's book!</div>
+        </div>
+        <div class="btn" style="background: var(--purple); color: white;">Open Scanner →</div>
+      </div>
+    </div>
+
+    <div style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 14px;">Or choose from the library</div>
     <div class="library-grid" id="libraryGrid"></div>
+  </div>
+
+  <!-- PANEL 4: OCR Scanner -->
+  <div class="panel" id="panel4">
+    <div style="margin-bottom:16px;">
+      <button class="btn btn-secondary" onclick="goToStep(2)">← Back to Library</button>
+    </div>
+    <div class="record-card" style="max-width:700px;">
+      <h2>Scan a Book Page</h2>
+      <p class="subtitle">Take a photo of any children's book page. We'll extract the text and read it aloud in your cloned voice.</p>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px; border: 2px dashed var(--border); border-radius: var(--radius-sm); cursor: pointer; background: #FEFAF5; transition: all 0.2s;" id="scanDropZone">
+          <div style="font-size: 3rem;">📷</div>
+          <div style="font-weight: 600; color: var(--text);">Tap to take a photo or upload an image</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">JPG, PNG — clear, well-lit photos work best</div>
+          <input type="file" accept="image/*" capture="environment" id="scanInput" style="display:none;" onchange="handleScanImage(event)">
+        </label>
+      </div>
+
+      <div id="scanPreview" style="display:none; margin-bottom: 20px;">
+        <img id="scanImage" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 12px;">
+        <div class="clone-status visible loading" id="scanStatus">
+          <div class="spinner"></div>
+          <span id="scanStatusText">Reading the page...</span>
+        </div>
+      </div>
+
+      <div id="scanResult" style="display:none;">
+        <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 8px;">Extracted Text</div>
+        <div id="scanText" contenteditable="true" style="background: #FEFAF5; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; font-family: 'Fraunces', serif; font-size: 1.05rem; line-height: 1.8; min-height: 100px; margin-bottom: 16px; outline: none;"></div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">You can edit the text above if the scan missed anything.</div>
+        <button class="btn btn-teal" onclick="readScannedText()" id="readScanBtn">▶ Read This Page Aloud</button>
+        <div class="reader-audio-status" id="scanAudioStatus" style="margin-top:12px;"></div>
+      </div>
+    </div>
   </div>
 
   <!-- PANEL 3: Reader -->
@@ -755,6 +805,98 @@ const books = [
       "But this time, nobody came. The villagers thought it was just another trick. \"He is lying again,\" they said, and they stayed in their homes. The wolf scattered the sheep and disappeared into the forest.",
       "The boy sat alone on the hillside, crying. He had learned a very important lesson. Nobody believes a liar, even when they are telling the truth. And from that day on, the boy never told another lie."
     ]
+  },
+  {
+    id: 'three-little-pigs',
+    title: 'The Three Little Pigs',
+    author: 'English Fairy Tale',
+    emoji: '🐷',
+    color: '#FCE4EC',
+    illustrations: [
+      { bg: '#FCE4EC', emojis: '🐷🐷🐷 👋🐖', bgEmoji: '🏡' },
+      { bg: '#FFF8E1', emojis: '🐷🌾 🏚️', bgEmoji: '☀️' },
+      { bg: '#FFF3E0', emojis: '🐷🪵 🏠', bgEmoji: '🌲' },
+      { bg: '#E3F2FD', emojis: '🐷🧱 🏗️', bgEmoji: '💪' },
+      { bg: '#FCE4EC', emojis: '🐺💨 🏚️💥 🏠💥', bgEmoji: '😱' },
+      { bg: '#E8F5E9', emojis: '🧱🏠 🐺😤 🐷🐷🐷🎉', bgEmoji: '⭐' },
+    ],
+    pages: [
+      "Once upon a time, there were three little pigs who lived with their mother. One day, she said, \"You are all grown up now. It is time for you to go out into the world and build your own houses.\" So the three little pigs set off on their way.",
+      "The first little pig was lazy. He built his house out of straw because it was the easiest thing to do. \"This will be good enough!\" he said, and he spent the rest of the day playing in the sunshine.",
+      "The second little pig worked a little harder. He built his house out of sticks. It took a bit longer, but he was happy with it. \"Nice and sturdy!\" he said, and went off to play with his brother.",
+      "The third little pig was the wisest. He worked very hard and built his house out of bricks. It took him a long time, but when he was done, he had the strongest house of all.",
+      "Then along came a big bad wolf. He went to the straw house and said, \"Little pig, little pig, let me come in!\" The pig said no, so the wolf huffed and puffed and blew the house down! He did the same to the stick house! Both pigs ran to their brother's brick house.",
+      "The wolf tried to blow down the brick house, but no matter how hard he huffed and puffed, it would not fall down. He tried to sneak in through the chimney, but the pigs had a pot of hot water waiting! The wolf ran away and never came back, and the three little pigs lived happily ever after."
+    ]
+  },
+  {
+    id: 'little-red-riding-hood',
+    title: 'Little Red Riding Hood',
+    author: 'Brothers Grimm',
+    emoji: '🧒',
+    color: '#FFEBEE',
+    illustrations: [
+      { bg: '#FFEBEE', emojis: '👧🧣 🧺 👵', bgEmoji: '🌸' },
+      { bg: '#E8F5E9', emojis: '👧🌲🌲 🐺👀', bgEmoji: '🌳' },
+      { bg: '#FFF8E1', emojis: '🐺🏃💨 🏠👵', bgEmoji: '🌲' },
+      { bg: '#F3E5F5', emojis: '👧🚪 🐺🛏️', bgEmoji: '😨' },
+      { bg: '#FFEBEE', emojis: '👧😱 🐺😈', bgEmoji: '❗' },
+      { bg: '#E8F5E9', emojis: '🪓🦸 👧👵🎉', bgEmoji: '⭐' },
+    ],
+    pages: [
+      "Once upon a time, there was a sweet little girl who always wore a red riding hood. Everyone called her Little Red Riding Hood. One day, her mother said, \"Take this basket of goodies to your grandmother. She is not feeling well. And remember, stay on the path through the woods!\"",
+      "Little Red Riding Hood skipped into the forest, singing a happy song. But hidden behind the trees, a sly wolf was watching her. \"Where are you going, little girl?\" he asked with a toothy grin. \"To my grandmother's house,\" she replied. The wolf smiled and hurried ahead.",
+      "The wolf ran to Grandmother's house and knocked on the door. \"Come in, dear!\" called Grandmother. The wolf rushed in, locked Grandmother in the closet, put on her nightgown and cap, and climbed into her bed to wait.",
+      "When Little Red Riding Hood arrived, she went to the bed. \"Grandmother, what big eyes you have!\" she said. \"All the better to see you with, my dear,\" said the wolf. \"What big ears you have!\" \"All the better to hear you with.\"",
+      "\"And Grandmother, what big teeth you have!\" cried Little Red Riding Hood. \"All the better to eat you with!\" growled the wolf, and he leaped out of the bed! Little Red Riding Hood screamed as loud as she could.",
+      "A brave woodcutter heard her cries and burst through the door. He chased the wolf far away into the forest. He found Grandmother safe in the closet, and everyone was so happy and relieved. Little Red Riding Hood promised to always stay on the path."
+    ]
+  },
+  {
+    id: 'ant-grasshopper',
+    title: 'The Ant and the Grasshopper',
+    author: 'Aesop',
+    emoji: '🦗',
+    color: '#E8F5E9',
+    illustrations: [
+      { bg: '#E8F5E9', emojis: '☀️🌻 🐜 🦗🎵', bgEmoji: '🌿' },
+      { bg: '#FFF8E1', emojis: '🐜💪🌾 🦗🎶😎', bgEmoji: '☀️' },
+      { bg: '#FFF3E0', emojis: '🐜🏠🌾🌾 🦗💃', bgEmoji: '🍂' },
+      { bg: '#E3F2FD', emojis: '❄️🌨️ 🦗🥶', bgEmoji: '⛄' },
+      { bg: '#FFF8E1', emojis: '🦗🚪😢 🐜🏠🌾', bgEmoji: '❄️' },
+      { bg: '#E8F5E9', emojis: '🐜🦗🤝 🏠☕', bgEmoji: '❤️' },
+    ],
+    pages: [
+      "On a warm summer day, a little ant was working very hard, carrying pieces of grain back to his home. Nearby, a grasshopper sat on a leaf, playing his fiddle and singing happy songs in the sunshine.",
+      "\"Why do you work so hard?\" laughed the grasshopper. \"Come and play with me! The sun is shining and the days are long!\" But the ant shook his head. \"I am storing food for winter. You should do the same, my friend.\"",
+      "The grasshopper just laughed. \"Winter is so far away! There is plenty of time to worry about that later.\" And so the grasshopper kept singing and dancing while the ant kept working, day after day, carrying grain home.",
+      "Then the cold winds came. Snow covered the ground. The fields were bare and there was nothing to eat. The grasshopper wandered around, cold and hungry, wishing he had listened to the ant.",
+      "Finally, the grasshopper knocked on the ant's door, shivering and thin. \"Please, friend, do you have any food to share? I am so hungry.\" The ant looked at the grasshopper and felt sorry for him.",
+      "The kind ant invited the grasshopper inside, shared his warm food, and gave him a place by the fire. \"Next summer,\" the ant said gently, \"we will work together.\" The grasshopper nodded and promised he would never waste another summer day."
+    ]
+  },
+  {
+    id: 'emperors-new-clothes',
+    title: "The Emperor's New Clothes",
+    author: 'Hans Christian Andersen',
+    emoji: '👑',
+    color: '#FFF8E1',
+    illustrations: [
+      { bg: '#FFF8E1', emojis: '👑🤴 👔👗👘', bgEmoji: '🏰' },
+      { bg: '#F3E5F5', emojis: '🧵✨ 🤥🤥', bgEmoji: '🪄' },
+      { bg: '#FFF3E0', emojis: '🤴👀 🧵❓', bgEmoji: '😰' },
+      { bg: '#E3F2FD', emojis: '👥👀 😬🤫', bgEmoji: '🏰' },
+      { bg: '#FFF8E1', emojis: '🤴🚶 👥😳', bgEmoji: '🎭' },
+      { bg: '#FFEBEE', emojis: '👦📢 🤴😳 👥🤣', bgEmoji: '💡' },
+    ],
+    pages: [
+      "There once lived an emperor who loved new clothes more than anything in the world. He spent all his money on the finest outfits and paraded through the streets every day in something new.",
+      "One day, two clever tricksters came to town. \"We can weave the most magnificent cloth in the world!\" they said. \"But it has a special power: anyone who is foolish or unfit for their job will not be able to see it.\"",
+      "The emperor paid them a fortune. The tricksters set up their looms and pretended to weave, but there was nothing there at all! When the emperor went to check, he saw empty looms, but he was too afraid to say so. \"How wonderful!\" he declared.",
+      "His ministers came to look too. They also saw nothing, but nobody wanted to seem foolish. \"Magnificent!\" they all said, nodding and pointing at the empty looms. \"The finest fabric we have ever seen!\"",
+      "The tricksters pretended to dress the emperor in his new clothes. He stood before his mirror wearing nothing at all, but everyone in the room praised how beautiful he looked. Then the emperor marched out for a grand parade through the city.",
+      "The crowds cheered politely, nobody wanting to admit they could see nothing. Then a small child tugged his mother's hand and shouted, \"But he has nothing on!\" Soon everyone was whispering, then laughing. The emperor turned bright red, but he held his head high and walked all the way home, having learned a lesson about honesty."
+    ]
   }
 ];
 
@@ -787,11 +929,14 @@ function saveAccessCode() {
 function goToStep(n) {
   if (n === 2 && !voiceId) return;
   if (n === 3 && !currentBook) return;
+  if (n === 4 && !voiceId) return;
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById('panel' + n).classList.add('active');
-  document.getElementById('step' + n).classList.add('active');
-  for (let i = 1; i < n; i++) {
+  // Panel 4 (scanner) shares step 2 highlight
+  const stepN = n === 4 ? 2 : n;
+  document.getElementById('step' + stepN).classList.add('active');
+  for (let i = 1; i < stepN; i++) {
     document.getElementById('step' + i).classList.add('completed');
   }
 }
@@ -874,11 +1019,14 @@ async function createVoiceClone() {
     });
 
     if (!resp.ok) {
-      const err = await resp.json();
+      const err = await resp.json().catch(() => ({ error: 'Voice cloning failed (status ' + resp.status + ')' }));
       throw new Error(err.detail?.message || err.error || 'Voice cloning failed.');
     }
 
-    const data = await resp.json();
+    const data = await resp.json().catch(() => null);
+    if (!data || !data.voice_id) {
+      throw new Error('Unexpected response from server. Please try again.');
+    }
     voiceId = data.voice_id;
     voiceName = name;
     localStorage.setItem('sv_voice_id', voiceId);
@@ -999,6 +1147,123 @@ async function playCurrentPage() {
   } catch(err) {
     status.textContent = '❌ ' + err.message;
     btn.textContent = '▶ Read This Page';
+    btn.disabled = false;
+  }
+}
+
+// ===== OCR SCANNER =====
+let tesseractLoaded = false;
+
+async function loadTesseract() {
+  if (tesseractLoaded) return;
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.5/tesseract.min.js';
+    script.onload = () => { tesseractLoaded = true; resolve(); };
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+async function handleScanImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Show preview
+  const preview = document.getElementById('scanPreview');
+  const img = document.getElementById('scanImage');
+  const result = document.getElementById('scanResult');
+  const status = document.getElementById('scanStatus');
+  const statusText = document.getElementById('scanStatusText');
+
+  preview.style.display = 'block';
+  result.style.display = 'none';
+  status.style.display = 'flex';
+  statusText.textContent = 'Loading OCR engine...';
+
+  const reader = new FileReader();
+  reader.onload = (e) => { img.src = e.target.result; };
+  reader.readAsDataURL(file);
+
+  try {
+    await loadTesseract();
+    statusText.textContent = 'Reading the page... This may take 10-20 seconds.';
+
+    const { data } = await Tesseract.recognize(file, 'eng', {
+      logger: m => {
+        if (m.status === 'recognizing text') {
+          const pct = Math.round((m.progress || 0) * 100);
+          statusText.textContent = 'Reading the page... ' + pct + '%';
+        }
+      }
+    });
+
+    const text = data.text.trim();
+    if (!text) {
+      status.className = 'clone-status visible error';
+      statusText.textContent = 'Could not read any text. Try a clearer, well-lit photo.';
+      return;
+    }
+
+    status.style.display = 'none';
+    result.style.display = 'block';
+    document.getElementById('scanText').textContent = text;
+
+  } catch (err) {
+    status.className = 'clone-status visible error';
+    statusText.textContent = 'OCR Error: ' + err.message;
+  }
+}
+
+async function readScannedText() {
+  if (!accessCode || !voiceId) return;
+
+  const text = document.getElementById('scanText').textContent.trim();
+  if (!text) return;
+
+  const btn = document.getElementById('readScanBtn');
+  const status = document.getElementById('scanAudioStatus');
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating...';
+  status.innerHTML = '<div class="spinner" style="border-top-color:var(--teal)"></div> Generating audio in your voice...';
+
+  try {
+    const resp = await fetch('/api/speak', {
+      method: 'POST',
+      headers: {
+        'x-access-code': accessCode,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        voice_id: voiceId,
+        text: text,
+        model_id: 'eleven_multilingual_v2',
+        voice_settings: { stability: 0.6, similarity_boost: 0.85 }
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.detail?.message || err.error || 'Audio generation failed.');
+    }
+
+    const audioBlob = await resp.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    stopAudio();
+    currentAudio = new Audio(audioUrl);
+    currentAudio.play();
+    btn.textContent = '⏸ Playing...';
+    status.textContent = '🔊 Reading aloud in your voice...';
+
+    currentAudio.onended = () => {
+      btn.textContent = '▶ Read This Page Aloud';
+      btn.disabled = false;
+      status.textContent = '✓ Done! Scan another page or go back to the library.';
+    };
+
+  } catch(err) {
+    status.textContent = '❌ ' + err.message;
+    btn.textContent = '▶ Read This Page Aloud';
     btn.disabled = false;
   }
 }

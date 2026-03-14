@@ -916,13 +916,40 @@ window.onload = function() {
 };
 
 // ===== ACCESS CODE =====
-function saveAccessCode() {
+async function saveAccessCode() {
   const raw = document.getElementById('accessCodeInput').value;
   const code = raw.replace(/[^\x20-\x7E]/g, '').trim();
   if (!code) return;
-  accessCode = code;
-  localStorage.setItem('sv_access_code', code);
-  document.getElementById('setupBanner').style.display = 'none';
+
+  // Disable button while checking
+  const btn = document.querySelector('#setupBanner .btn-primary');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Checking...';
+
+  try {
+    const resp = await fetch('/api/verify', {
+      method: 'POST',
+      headers: { 'x-access-code': code }
+    });
+    const data = await resp.json();
+
+    if (data.valid) {
+      accessCode = code;
+      localStorage.setItem('sv_access_code', code);
+      document.getElementById('setupBanner').style.display = 'none';
+    } else {
+      document.getElementById('accessCodeInput').value = '';
+      document.getElementById('accessCodeInput').placeholder = 'Invalid code — try again';
+      document.getElementById('accessCodeInput').style.borderColor = '#DC3545';
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  } catch (err) {
+    document.getElementById('accessCodeInput').placeholder = 'Connection error — try again';
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
 }
 
 // ===== NAVIGATION =====

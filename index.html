@@ -672,38 +672,130 @@ nav {
     <div class="library-grid" id="libraryGrid"></div>
   </div>
 
-  <!-- PANEL 4: OCR Scanner -->
+  <!-- PANEL 4: Scanner Hub -->
   <div class="panel" id="panel4">
     <div style="margin-bottom:16px;">
       <button class="btn btn-secondary" onclick="goToStep(2)">← Back to Library</button>
     </div>
     <div class="record-card" style="max-width:700px;">
-      <h2>Scan a Book Page</h2>
-      <p class="subtitle">Take a photo of any children's book page. We'll extract the text and read it aloud in your cloned voice.</p>
+      <h2>Read Any Book</h2>
+      <p class="subtitle">Scan a page, scan the barcode, or type in the ISBN to find and read any children's book.</p>
 
-      <div style="margin-bottom: 20px;">
-        <label style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px; border: 2px dashed var(--border); border-radius: var(--radius-sm); cursor: pointer; background: #FEFAF5; transition: all 0.2s;" id="scanDropZone">
-          <div style="font-size: 3rem;">📷</div>
-          <div style="font-weight: 600; color: var(--text);">Tap to take a photo or upload an image</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">JPG, PNG — clear, well-lit photos work best</div>
-          <input type="file" accept="image/*" capture="environment" id="scanInput" style="display:none;" onchange="handleScanImage(event)">
-        </label>
+      <!-- Three tab switcher -->
+      <div style="display:flex; gap:0; margin-bottom:24px; border-radius: var(--radius-sm); overflow:hidden; border: 1px solid var(--border);">
+        <button id="tabScanPage" onclick="switchScanTab('page')" style="flex:1; padding:12px 8px; border:none; font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer; background:var(--accent); color:white; transition: all 0.2s;">📷 Scan Page</button>
+        <button id="tabScanBarcode" onclick="switchScanTab('barcode')" style="flex:1; padding:12px 8px; border:none; font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer; background:var(--bg-card); color:var(--text-muted); transition: all 0.2s;">📊 Scan Barcode</button>
+        <button id="tabIsbn" onclick="switchScanTab('isbn')" style="flex:1; padding:12px 8px; border:none; font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.85rem; cursor:pointer; background:var(--bg-card); color:var(--text-muted); transition: all 0.2s;">🔢 Enter ISBN</button>
       </div>
 
-      <div id="scanPreview" style="display:none; margin-bottom: 20px;">
-        <img id="scanImage" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 12px;">
-        <div class="clone-status visible loading" id="scanStatus">
-          <div class="spinner"></div>
-          <span id="scanStatusText">Reading the page...</span>
+      <!-- TAB: Scan Page (OCR) -->
+      <div id="scanTabPage">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Take a photo of any book page. We'll read the text and narrate it in your cloned voice.</p>
+        <div style="margin-bottom: 20px;">
+          <label style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px; border: 2px dashed var(--border); border-radius: var(--radius-sm); cursor: pointer; background: #FEFAF5; transition: all 0.2s;" id="scanDropZone">
+            <div style="font-size: 3rem;">📷</div>
+            <div style="font-weight: 600; color: var(--text);">Tap to take a photo or upload an image</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">JPG, PNG — clear, well-lit photos work best</div>
+            <input type="file" accept="image/*" capture="environment" id="scanInput" style="display:none;" onchange="handleScanImage(event)">
+          </label>
+        </div>
+
+        <div id="scanPreview" style="display:none; margin-bottom: 20px;">
+          <img id="scanImage" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 12px;">
+          <div class="clone-status visible loading" id="scanStatus">
+            <div class="spinner"></div>
+            <span id="scanStatusText">Reading the page...</span>
+          </div>
+        </div>
+
+        <div id="scanResult" style="display:none;">
+          <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 8px;">Extracted Text</div>
+          <div id="scanText" contenteditable="true" style="background: #FEFAF5; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; font-family: 'Fraunces', serif; font-size: 1.05rem; line-height: 1.8; min-height: 100px; margin-bottom: 16px; outline: none;"></div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">You can edit the text above if the scan missed anything.</div>
+          <button class="btn btn-teal" onclick="readScannedText()" id="readScanBtn">▶ Read This Page Aloud</button>
+          <div class="reader-audio-status" id="scanAudioStatus" style="margin-top:12px;"></div>
         </div>
       </div>
 
-      <div id="scanResult" style="display:none;">
-        <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 8px;">Extracted Text</div>
-        <div id="scanText" contenteditable="true" style="background: #FEFAF5; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; font-family: 'Fraunces', serif; font-size: 1.05rem; line-height: 1.8; min-height: 100px; margin-bottom: 16px; outline: none;"></div>
-        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">You can edit the text above if the scan missed anything.</div>
-        <button class="btn btn-teal" onclick="readScannedText()" id="readScanBtn">▶ Read This Page Aloud</button>
-        <div class="reader-audio-status" id="scanAudioStatus" style="margin-top:12px;"></div>
+      <!-- TAB: Scan Barcode -->
+      <div id="scanTabBarcode" style="display:none;">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Point your camera at the ISBN barcode on the back of any children's book.</p>
+
+        <div style="margin-bottom:20px;">
+          <label style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px; border: 2px dashed var(--border); border-radius: var(--radius-sm); cursor: pointer; background: #FEFAF5; transition: all 0.2s;">
+            <div style="font-size: 3rem;">📊</div>
+            <div style="font-weight: 600; color: var(--text);">Tap to scan a barcode</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Aim at the ISBN barcode on the back cover</div>
+            <input type="file" accept="image/*" capture="environment" id="barcodeInput" style="display:none;" onchange="handleBarcodeImage(event)">
+          </label>
+        </div>
+
+        <div id="barcodePreview" style="display:none; margin-bottom:20px;">
+          <img id="barcodeImage" style="width:100%; border-radius: var(--radius-sm); margin-bottom: 12px;">
+          <div class="clone-status visible loading" id="barcodeStatus">
+            <div class="spinner"></div>
+            <span id="barcodeStatusText">Scanning barcode...</span>
+          </div>
+        </div>
+
+        <div id="barcodeResult" style="display:none;"></div>
+      </div>
+
+      <!-- TAB: Enter ISBN -->
+      <div id="scanTabIsbn" style="display:none;">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Type or paste the ISBN number from the back of any children's book. You'll find it above or below the barcode — it's a 10 or 13 digit number starting with 978 or 979.</p>
+
+        <div style="margin-bottom:20px;">
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <input type="text" id="isbnInput" placeholder="e.g. 978-0-14-050152-7" style="flex:1; min-width:200px; padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:1rem; outline:none; letter-spacing:0.5px;" oninput="formatIsbnInput(this)">
+            <button class="btn btn-primary" onclick="lookupIsbn()" id="isbnLookupBtn">Look Up Book</button>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">
+            Where to find it: flip the book over and look for a number near the barcode labeled ISBN.
+          </div>
+        </div>
+
+        <!-- ISBN help image -->
+        <div style="background:#FEFAF5; border:1px dashed var(--border); border-radius:var(--radius-sm); padding:16px; margin-bottom:20px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="font-size:2rem;">📖</div>
+            <div>
+              <div style="font-size:0.85rem; font-weight:600; color:var(--text);">Not sure where to find the ISBN?</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); line-height:1.5; margin-top:4px;">Check the back cover near the barcode, the copyright page (first few pages inside), or search the book title on Amazon — the ISBN is listed in the product details.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="isbnResult" style="display:none;"></div>
+      </div>
+
+      <!-- Shared: Book found result (used by barcode and ISBN) -->
+      <div id="bookLookupResult" style="display:none; margin-top:20px;">
+        <div style="background:var(--teal-soft); border:1px solid var(--teal); border-radius:var(--radius); padding:20px;">
+          <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+            <div id="bookCoverImg" style="width:80px; height:110px; background:var(--border); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:2rem; flex-shrink:0;">📕</div>
+            <div style="flex:1; min-width:200px;">
+              <div style="font-family:'Fraunces',serif; font-size:1.1rem; font-weight:700; color:var(--text);" id="lookupBookTitle">Book Title</div>
+              <div style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;" id="lookupBookAuthor">Author Name</div>
+              <div style="font-size:0.8rem; color:var(--teal); font-weight:600; margin-top:6px;" id="lookupBookIsbn">ISBN: 978-0-00-000000-0</div>
+              <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-teal" onclick="readLookedUpBook()" id="readLookupBtn">▶ Read This Book</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coming soon note for licensed content -->
+        <div style="background:#FFF8E1; border:1px solid #FFE082; border-radius:var(--radius-sm); padding:14px; margin-top:12px; font-size:0.85rem; color:#F57F17; line-height:1.6;">
+          <strong>Coming soon:</strong> We're building partnerships with publishers to offer instant narration of licensed books. For now, use the "Scan Page" tab to photograph and read individual pages of this book. We've saved this ISBN to your library for when licensed content becomes available.
+        </div>
+      </div>
+
+      <!-- Book not found -->
+      <div id="bookNotFound" style="display:none; margin-top:20px;">
+        <div style="background:#FCE4EC; border:1px solid #E57373; border-radius:var(--radius-sm); padding:16px; font-size:0.9rem; color:#C62828; line-height:1.6;">
+          <strong>Book not found.</strong> We couldn't find this ISBN in our database. You can still read this book by switching to the "Scan Page" tab and photographing each page.
+        </div>
       </div>
     </div>
   </div>
@@ -1545,6 +1637,166 @@ async function readScannedText() {
     btn.textContent = '▶ Read This Page Aloud';
     btn.disabled = false;
   }
+}
+
+// ===== SCAN TABS =====
+function switchScanTab(tab) {
+  const tabs = { page: 'scanTabPage', barcode: 'scanTabBarcode', isbn: 'scanTabIsbn' };
+  const btns = { page: 'tabScanPage', barcode: 'tabScanBarcode', isbn: 'tabIsbn' };
+  Object.values(tabs).forEach(id => document.getElementById(id).style.display = 'none');
+  Object.values(btns).forEach(id => { document.getElementById(id).style.background = 'var(--bg-card)'; document.getElementById(id).style.color = 'var(--text-muted)'; });
+  document.getElementById(tabs[tab]).style.display = 'block';
+  document.getElementById(btns[tab]).style.background = 'var(--accent)';
+  document.getElementById(btns[tab]).style.color = 'white';
+  // Hide shared results when switching
+  document.getElementById('bookLookupResult').style.display = 'none';
+  document.getElementById('bookNotFound').style.display = 'none';
+}
+
+// ===== BARCODE SCANNER =====
+let quaggaLoaded = false;
+
+async function loadQuagga() {
+  if (quaggaLoaded) return;
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
+    script.onload = () => { quaggaLoaded = true; resolve(); };
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+async function handleBarcodeImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const preview = document.getElementById('barcodePreview');
+  const img = document.getElementById('barcodeImage');
+  const status = document.getElementById('barcodeStatus');
+  const statusText = document.getElementById('barcodeStatusText');
+
+  preview.style.display = 'block';
+  status.style.display = 'flex';
+  status.className = 'clone-status visible loading';
+  statusText.textContent = 'Loading barcode scanner...';
+
+  const reader = new FileReader();
+  reader.onload = (e) => { img.src = e.target.result; };
+  reader.readAsDataURL(file);
+
+  try {
+    await loadQuagga();
+    statusText.textContent = 'Scanning for barcode...';
+
+    const imgUrl = URL.createObjectURL(file);
+
+    Quagga.decodeSingle({
+      src: imgUrl,
+      numOfWorkers: 0,
+      inputStream: { size: 1200 },
+      decoder: {
+        readers: ['ean_reader', 'ean_8_reader', 'upc_reader', 'upc_e_reader']
+      },
+      locate: true
+    }, function(result) {
+      if (result && result.codeResult) {
+        const isbn = result.codeResult.code;
+        statusText.textContent = 'Barcode found: ' + isbn;
+        status.className = 'clone-status visible success';
+        lookupIsbnValue(isbn);
+      } else {
+        status.className = 'clone-status visible error';
+        statusText.textContent = 'Could not detect a barcode. Try a clearer, well-lit photo of the ISBN barcode on the back cover. Or switch to the "Enter ISBN" tab and type it manually.';
+      }
+    });
+  } catch(err) {
+    status.className = 'clone-status visible error';
+    statusText.textContent = 'Scanner error: ' + err.message;
+  }
+}
+
+// ===== ISBN LOOKUP =====
+function formatIsbnInput(input) {
+  // Strip non-digit characters except hyphens for display
+  let val = input.value.replace(/[^\d-X]/gi, '');
+  input.value = val;
+}
+
+function lookupIsbn() {
+  const raw = document.getElementById('isbnInput').value.trim();
+  const isbn = raw.replace(/[-\s]/g, '');
+  if (!isbn || (isbn.length !== 10 && isbn.length !== 13)) {
+    document.getElementById('bookNotFound').style.display = 'block';
+    document.getElementById('bookNotFound').querySelector('strong').textContent = 'Invalid ISBN.';
+    document.getElementById('bookNotFound').querySelector('div').innerHTML = '<strong>Invalid ISBN.</strong> Please enter a 10 or 13 digit ISBN number. You can find it on the back cover near the barcode.';
+    document.getElementById('bookLookupResult').style.display = 'none';
+    return;
+  }
+  lookupIsbnValue(isbn);
+}
+
+async function lookupIsbnValue(isbn) {
+  // Clean the ISBN
+  const cleanIsbn = isbn.replace(/[-\s]/g, '');
+
+  document.getElementById('bookLookupResult').style.display = 'none';
+  document.getElementById('bookNotFound').style.display = 'none';
+
+  // Use Open Library API (free, no key needed)
+  try {
+    const resp = await fetch('https://openlibrary.org/api/books?bibkeys=ISBN:' + cleanIsbn + '&format=json&jscmd=data');
+    const data = await resp.json();
+    const key = 'ISBN:' + cleanIsbn;
+
+    if (data[key]) {
+      const book = data[key];
+      const title = book.title || 'Unknown Title';
+      const author = (book.authors && book.authors.length > 0) ? book.authors.map(a => a.name).join(', ') : 'Unknown Author';
+      const coverUrl = book.cover ? book.cover.medium : null;
+
+      document.getElementById('lookupBookTitle').textContent = title;
+      document.getElementById('lookupBookAuthor').textContent = author;
+      document.getElementById('lookupBookIsbn').textContent = 'ISBN: ' + cleanIsbn;
+
+      const coverEl = document.getElementById('bookCoverImg');
+      if (coverUrl) {
+        coverEl.innerHTML = '<img src="' + coverUrl + '" style="width:80px; height:110px; object-fit:cover; border-radius:8px;">';
+      } else {
+        coverEl.innerHTML = '📕';
+      }
+
+      document.getElementById('bookLookupResult').style.display = 'block';
+      document.getElementById('bookNotFound').style.display = 'none';
+
+      // Save to local scanned books list
+      saveScannedBook(cleanIsbn, title, author);
+
+    } else {
+      document.getElementById('bookNotFound').style.display = 'block';
+      document.getElementById('bookLookupResult').style.display = 'none';
+    }
+  } catch(err) {
+    document.getElementById('bookNotFound').style.display = 'block';
+    document.getElementById('bookNotFound').querySelector('div').innerHTML = '<strong>Connection error.</strong> Could not reach the book database. Check your internet connection and try again.';
+    document.getElementById('bookLookupResult').style.display = 'none';
+  }
+}
+
+function saveScannedBook(isbn, title, author) {
+  // Save to localStorage for future reference
+  let scannedBooks = JSON.parse(localStorage.getItem('sv_scanned_books') || '[]');
+  if (!scannedBooks.find(b => b.isbn === isbn)) {
+    scannedBooks.push({ isbn, title, author, date: new Date().toISOString() });
+    localStorage.setItem('sv_scanned_books', JSON.stringify(scannedBooks));
+  }
+}
+
+function readLookedUpBook() {
+  // For now, redirect to the Scan Page tab since we don't have licensed content yet
+  switchScanTab('page');
+  const title = document.getElementById('lookupBookTitle').textContent;
+  alert('Great choice! "' + title + '" has been saved to your library. For now, use the Scan Page tab to photograph and read each page. Licensed instant-read is coming soon!');
 }
 
 // ===== INVITE FAMILY =====

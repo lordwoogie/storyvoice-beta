@@ -534,32 +534,105 @@ nav {
   <div class="panel active" id="panel1">
     <div class="record-card">
       <h2>Create a Voice Profile</h2>
-      <p class="subtitle">Read the passage below out loud in a warm, storytelling voice. This takes about 60 seconds and gives us enough to clone the voice for any story.</p>
+      <p class="subtitle">Record a voice live, or upload an existing audio/video file of a loved one. Voicemails, home videos, and voice memos all work.</p>
 
-      <div class="prompt-box">
-        <span class="label">Read this aloud:</span>
-        The sun was setting behind the old oak tree, painting the sky in shades of orange and gold. A little rabbit peeked out from behind a mushroom, wiggling its nose at the evening breeze. "What a beautiful night for an adventure," whispered the wind through the leaves. Down by the creek, three tiny frogs were singing their favorite song, while a wise old owl watched from high above. "Every story begins with a single step," the owl said softly, "and every voice carries a little bit of magic." The stars began to twinkle one by one, like tiny lanterns lighting the way home.
+      <!-- Tab switcher -->
+      <div style="display:flex; gap:0; margin-bottom:24px; border-radius: var(--radius-sm); overflow:hidden; border: 1px solid var(--border);">
+        <button id="tabRecord" onclick="switchVoiceTab('record')" style="flex:1; padding:12px; border:none; font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.9rem; cursor:pointer; background:var(--accent); color:white; transition: all 0.2s;">Record Live</button>
+        <button id="tabUpload" onclick="switchVoiceTab('upload')" style="flex:1; padding:12px; border:none; font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.9rem; cursor:pointer; background:var(--bg-card); color:var(--text-muted); transition: all 0.2s;">Upload a Voice</button>
       </div>
 
-      <div class="record-controls">
-        <button class="btn-record" id="recordBtn" onclick="toggleRecording()">
-          <div class="dot"></div>
-        </button>
-        <div class="record-timer" id="timer">0:00</div>
-        <div class="record-hint" id="recordHint">Tap to start recording</div>
-      </div>
+      <!-- RECORD TAB -->
+      <div id="voiceTabRecord">
+        <div class="prompt-box">
+          <span class="label">Read this aloud:</span>
+          The sun was setting behind the old oak tree, painting the sky in shades of orange and gold. A little rabbit peeked out from behind a mushroom, wiggling its nose at the evening breeze. "What a beautiful night for an adventure," whispered the wind through the leaves. Down by the creek, three tiny frogs were singing their favorite song, while a wise old owl watched from high above. "Every story begins with a single step," the owl said softly, "and every voice carries a little bit of magic." The stars began to twinkle one by one, like tiny lanterns lighting the way home.
+        </div>
 
-      <div class="audio-preview" id="audioPreview">
-        <audio id="audioPlayback" controls></audio>
-        <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
-          <button class="btn btn-secondary" onclick="resetRecording()">Re-record</button>
-          <button class="btn btn-primary" id="cloneBtn" onclick="createVoiceClone()">✨ Create Voice Clone</button>
+        <div class="record-controls">
+          <button class="btn-record" id="recordBtn" onclick="toggleRecording()">
+            <div class="dot"></div>
+          </button>
+          <div class="record-timer" id="timer">0:00</div>
+          <div class="record-hint" id="recordHint">Tap to start recording</div>
+        </div>
+
+        <div class="audio-preview" id="audioPreview">
+          <audio id="audioPlayback" controls></audio>
+          <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" onclick="resetRecording()">Re-record</button>
+            <button class="btn btn-primary" id="cloneBtn" onclick="createVoiceClone('record')">✨ Create Voice Clone</button>
+          </div>
         </div>
       </div>
 
+      <!-- UPLOAD TAB -->
+      <div id="voiceTabUpload" style="display:none;">
+        <div style="background:#FEFAF5; border:1px dashed var(--border); border-radius:var(--radius-sm); padding:20px; margin-bottom:16px;">
+          <p style="font-size:0.9rem; color:var(--text); margin-bottom:12px; line-height:1.6;">Upload any audio or video file containing a loved one's voice. The clearer the audio, the better the clone. Good sources include:</p>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+            <span style="background:var(--accent-soft); color:var(--accent); padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;">Voicemails</span>
+            <span style="background:var(--teal-soft); color:var(--teal); padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;">Home videos</span>
+            <span style="background:var(--purple-soft); color:var(--purple); padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;">Voice memos</span>
+            <span style="background:#FFF3E0; color:#E65100; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;">Video calls</span>
+            <span style="background:#E3F2FD; color:#1565C0; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;">Audio messages</span>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted);">Minimum 30 seconds of clear speech. Supports MP3, WAV, M4A, MP4, MOV, WebM.</p>
+        </div>
+
+        <label style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:32px; border:2px dashed var(--border); border-radius:var(--radius-sm); cursor:pointer; background:white; transition:all 0.2s;" id="uploadDropZone" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:2.5rem;">📁</div>
+          <div style="font-weight:600; color:var(--text);">Tap to choose a file</div>
+          <div style="font-size:0.85rem; color:var(--text-muted);">or drag and drop here</div>
+          <input type="file" accept="audio/*,video/*,.mp3,.wav,.m4a,.mp4,.mov,.webm,.ogg,.aac" id="voiceUploadInput" style="display:none;" onchange="handleVoiceUpload(event)">
+        </label>
+
+        <div id="uploadPreview" style="display:none; margin-top:16px;">
+          <div style="display:flex; align-items:center; gap:12px; padding:14px; background:#FEFAF5; border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <div style="font-size:1.5rem;">🎵</div>
+            <div style="flex:1;">
+              <div style="font-weight:600; font-size:0.9rem;" id="uploadFileName">file.mp3</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);" id="uploadFileSize">2.4 MB</div>
+            </div>
+            <button class="btn btn-secondary" onclick="resetUpload()" style="font-size:0.8rem;">Remove</button>
+          </div>
+          <audio id="uploadAudioPlayback" controls style="width:100%; margin-top:10px;"></audio>
+
+          <!-- Voice name input -->
+          <div style="margin-top:14px;">
+            <label style="font-size:0.85rem; font-weight:600; color:var(--text); display:block; margin-bottom:6px;">Who is this voice? (optional)</label>
+            <input type="text" id="voiceNameInput" placeholder="e.g. Grandma Betty, Dad, Uncle Joe" style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none;">
+          </div>
+
+          <div style="margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-primary" id="uploadCloneBtn" onclick="createVoiceClone('upload')">✨ Create Voice Clone</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status (shared) -->
       <div class="clone-status" id="cloneStatus">
         <div class="spinner"></div>
         <span id="cloneStatusText"></span>
+      </div>
+
+      <!-- Save Your Voice guide (appears after successful clone) -->
+      <div id="saveVoiceGuide" style="display:none; margin-top:24px; background:linear-gradient(135deg, #E3F2FD 0%, #E8F5E9 100%); border:1px solid var(--border); border-radius:var(--radius); padding:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+          <span style="font-size:1.5rem;">💾</span>
+          <h3 style="font-family:'Fraunces',serif; font-size:1.05rem; color:var(--text);">Save this voice to your device</h3>
+        </div>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px; line-height:1.6;">This voice is precious. We strongly recommend saving a backup copy to your own device. If this voice belongs to someone who has passed or is elderly, this backup ensures their voice is never lost.</p>
+        <button class="btn btn-teal" onclick="downloadVoiceBackup()" id="downloadVoiceBtn">⬇ Download Voice Recording</button>
+        <div style="margin-top:16px; padding-top:14px; border-top:1px solid rgba(0,0,0,0.08);">
+          <p style="font-size:0.8rem; font-weight:600; color:var(--text); margin-bottom:8px;">How to keep it safe:</p>
+          <div style="font-size:0.8rem; color:var(--text-muted); line-height:1.8;">
+            <strong>On your phone:</strong> The file saves to your Downloads folder. Move it to a cloud service like iCloud, Google Drive, or Dropbox for extra safety.<br>
+            <strong>On your computer:</strong> Save it to your Documents folder AND copy it to a USB flash drive or external hard drive.<br>
+            <strong>Best practice:</strong> Keep copies in at least 2 places. Email the file to yourself as an extra backup. Label it clearly (e.g. "Grandma Betty voice recording 2026").<br>
+            <strong>Share with family:</strong> Send the file to other family members so multiple people have a copy. This voice belongs to your whole family.
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1015,29 +1088,111 @@ function resetRecording() {
   audioChunks = [];
 }
 
+// ===== VOICE TABS =====
+let uploadedFile = null;
+let lastVoiceBlob = null;
+let lastVoiceName = '';
+
+function switchVoiceTab(tab) {
+  const recordTab = document.getElementById('voiceTabRecord');
+  const uploadTab = document.getElementById('voiceTabUpload');
+  const btnRecord = document.getElementById('tabRecord');
+  const btnUpload = document.getElementById('tabUpload');
+  if (tab === 'record') {
+    recordTab.style.display = 'block';
+    uploadTab.style.display = 'none';
+    btnRecord.style.background = 'var(--accent)';
+    btnRecord.style.color = 'white';
+    btnUpload.style.background = 'var(--bg-card)';
+    btnUpload.style.color = 'var(--text-muted)';
+  } else {
+    recordTab.style.display = 'none';
+    uploadTab.style.display = 'block';
+    btnUpload.style.background = 'var(--accent)';
+    btnUpload.style.color = 'white';
+    btnRecord.style.background = 'var(--bg-card)';
+    btnRecord.style.color = 'var(--text-muted)';
+  }
+}
+
+// ===== VOICE UPLOAD =====
+function handleVoiceUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  uploadedFile = file;
+
+  document.getElementById('uploadPreview').style.display = 'block';
+  document.getElementById('uploadFileName').textContent = file.name;
+  document.getElementById('uploadFileSize').textContent = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+
+  const url = URL.createObjectURL(file);
+  document.getElementById('uploadAudioPlayback').src = url;
+}
+
+function resetUpload() {
+  uploadedFile = null;
+  document.getElementById('uploadPreview').style.display = 'none';
+  document.getElementById('voiceUploadInput').value = '';
+  document.getElementById('uploadAudioPlayback').src = '';
+  document.getElementById('voiceNameInput').value = '';
+}
+
+// ===== DOWNLOAD VOICE BACKUP =====
+function downloadVoiceBackup() {
+  if (!lastVoiceBlob) return;
+  const ext = lastVoiceBlob.type.includes('webm') ? 'webm' : lastVoiceBlob.type.includes('mp4') ? 'mp4' : lastVoiceBlob.type.includes('wav') ? 'wav' : lastVoiceBlob.type.includes('m4a') ? 'm4a' : 'mp3';
+  const safeName = lastVoiceName.replace(/[^a-zA-Z0-9 ]/g, '').trim() || 'voice_recording';
+  const date = new Date().toISOString().slice(0,10);
+  const filename = safeName + '_' + date + '.' + ext;
+
+  const url = URL.createObjectURL(lastVoiceBlob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 // ===== VOICE CLONING =====
-async function createVoiceClone() {
+async function createVoiceClone(source) {
   if (!accessCode) {
     alert('Please enter your access code first.');
     return;
   }
-  if (audioChunks.length === 0) return;
+
+  let blob;
+  let displayName;
+
+  if (source === 'upload') {
+    if (!uploadedFile) return;
+    blob = uploadedFile;
+    displayName = document.getElementById('voiceNameInput').value.trim() || 'Uploaded Voice';
+  } else {
+    if (audioChunks.length === 0) return;
+    blob = new Blob(audioChunks, { type: 'audio/webm' });
+    displayName = 'Recorded Voice';
+  }
+
+  // Save blob for backup download
+  lastVoiceBlob = blob;
+  lastVoiceName = displayName;
 
   const status = document.getElementById('cloneStatus');
   const statusText = document.getElementById('cloneStatusText');
-  const cloneBtn = document.getElementById('cloneBtn');
+  const cloneBtn = source === 'upload' ? document.getElementById('uploadCloneBtn') : document.getElementById('cloneBtn');
 
   status.className = 'clone-status visible loading';
-  statusText.textContent = 'Creating your voice clone... This takes about 30 seconds.';
+  statusText.textContent = 'Creating voice clone for ' + displayName + '... This takes about 30 seconds.';
   cloneBtn.disabled = true;
 
   try {
-    const blob = new Blob(audioChunks, { type: 'audio/webm' });
     const formData = new FormData();
-    const name = 'StoryVoice_' + Date.now();
+    const name = displayName + '_' + Date.now();
     formData.append('name', name);
-    formData.append('description', 'Voice clone created via StoryVoice app');
-    formData.append('files', blob, 'recording.webm');
+    formData.append('description', 'Voice clone: ' + displayName + ' via Stories Stay');
+    formData.append('files', blob, blob.name || 'recording.webm');
 
     const resp = await fetch('/api/clone', {
       method: 'POST',
@@ -1060,9 +1215,13 @@ async function createVoiceClone() {
     localStorage.setItem('sv_voice_name', voiceName);
 
     status.className = 'clone-status visible success';
-    statusText.textContent = 'Voice clone created! You can now listen to stories in your voice.';
+    statusText.textContent = 'Voice clone created for ' + displayName + '! You can now listen to stories in their voice.';
 
-    setTimeout(() => goToStep(2), 1500);
+    // Show the save guide
+    document.getElementById('saveVoiceGuide').style.display = 'block';
+
+    // Auto-advance after a delay
+    setTimeout(() => goToStep(2), 4000);
 
   } catch(err) {
     status.className = 'clone-status visible error';

@@ -645,7 +645,7 @@ nav {
     </div>
 
     <!-- Scan a Book Card -->
-    <div style="background: linear-gradient(135deg, var(--purple-soft) 0%, #F3E8FF 100%); border: 2px dashed var(--purple); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 28px; cursor: pointer; transition: all 0.2s;" onclick="goToStep(4)" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+    <div style="background: linear-gradient(135deg, var(--purple-soft) 0%, #F3E8FF 100%); border: 2px dashed var(--purple); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px; cursor: pointer; transition: all 0.2s;" onclick="goToStep(4)" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
       <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
         <div style="font-size: 2.5rem;">📸</div>
         <div style="flex:1; min-width: 200px;">
@@ -653,6 +653,18 @@ nav {
           <div style="font-size: 0.85rem; color: var(--text-muted);">Point your camera at a page and hear it read in your cloned voice. Works with any children's book!</div>
         </div>
         <div class="btn" style="background: var(--purple); color: white;">Open Scanner →</div>
+      </div>
+    </div>
+
+    <!-- Invite Family Card -->
+    <div style="background: linear-gradient(135deg, #E3F2FD 0%, #E1F5EE 100%); border: 2px dashed var(--teal); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 28px; cursor: pointer; transition: all 0.2s;" onclick="showInvitePanel()" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+      <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <div style="font-size: 2.5rem;">💌</div>
+        <div style="flex:1; min-width: 200px;">
+          <div style="font-family:'Fraunces',serif; font-size: 1.1rem; font-weight: 700; color: var(--teal); margin-bottom: 4px;">Invite Family to Record Their Voice</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">Send a link to grandma, dad, or anyone. They record their voice and it appears in your library.</div>
+        </div>
+        <div class="btn btn-teal">Invite →</div>
       </div>
     </div>
 
@@ -696,7 +708,88 @@ nav {
     </div>
   </div>
 
-  <!-- PANEL 3: Reader -->
+  <!-- PANEL 5: Invite Family -->
+  <div class="panel" id="panel5">
+    <div style="margin-bottom:16px;">
+      <button class="btn btn-secondary" onclick="goToStep(2)">← Back to Library</button>
+    </div>
+    <div class="record-card" style="max-width:700px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+        <span style="font-size:2rem;">💌</span>
+        <h2 style="font-family:'Fraunces',serif;">Invite Family to Record Their Voice</h2>
+      </div>
+      <p class="subtitle">Send a personal invite to a family member. They'll get a simple page where they can record or upload their voice — no app download needed. Their voice will be added to your family's voice library.</p>
+
+      <!-- Who to invite -->
+      <div style="margin-bottom:20px;">
+        <label style="font-size:0.85rem; font-weight:600; color:var(--text); display:block; margin-bottom:6px;">Who would you like to invite?</label>
+        <input type="text" id="inviteName" placeholder="e.g. Grandma Betty, Uncle Joe, Aunt Sarah" style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; margin-bottom:12px;">
+        <label style="font-size:0.85rem; font-weight:600; color:var(--text); display:block; margin-bottom:6px;">Their relationship to the child</label>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+          <button class="btn btn-secondary invite-rel-btn" onclick="selectRelation(this,'Grandma')" style="font-size:0.8rem;">Grandma</button>
+          <button class="btn btn-secondary invite-rel-btn" onclick="selectRelation(this,'Grandpa')" style="font-size:0.8rem;">Grandpa</button>
+          <button class="btn btn-secondary invite-rel-btn" onclick="selectRelation(this,'Mom')" style="font-size:0.8rem;">Mom</button>
+          <button class="btn btn-secondary invite-rel-btn" onclick="selectRelation(this,'Dad')" style="font-size:0.8rem;">Dad</button>
+          <button class="btn btn-secondary invite-rel-btn" onclick="selectRelation(this,'Aunt')" style="font-size:0.8rem;">Aunt</button>
+          <button class="btn btn-secondary invite-rel-btn" onclick="selectRelation(this,'Uncle')" style="font-size:0.8rem;">Uncle</button>
+          <button class="btn btn-secondary invite-rel-btn" onclick="selectRelation(this,'Other')" style="font-size:0.8rem;">Other</button>
+        </div>
+      </div>
+
+      <!-- Personal message -->
+      <div style="margin-bottom:20px;">
+        <label style="font-size:0.85rem; font-weight:600; color:var(--text); display:block; margin-bottom:6px;">Add a personal message (optional)</label>
+        <textarea id="inviteMessage" placeholder="Hi Grandma! We'd love to have your voice read bedtime stories to the kids. Just tap the link and record yourself reading the short passage — it only takes 60 seconds!" style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; min-height:80px; resize:vertical;"></textarea>
+      </div>
+
+      <!-- Generate Link -->
+      <div style="margin-bottom:20px;">
+        <button class="btn btn-teal" onclick="generateInviteLink()" style="width:100%; justify-content:center; padding:14px;">💌 Generate Invite Link</button>
+      </div>
+
+      <!-- Generated invite (hidden until generated) -->
+      <div id="inviteResult" style="display:none;">
+        <div style="background:var(--teal-soft); border:1px solid var(--teal); border-radius:var(--radius-sm); padding:20px; margin-bottom:16px;">
+          <div style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--teal); margin-bottom:8px;">Share this link</div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="text" id="inviteLinkDisplay" readonly style="flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:0.85rem; background:white; color:var(--text);">
+            <button class="btn btn-teal" onclick="copyInviteLink()" id="copyLinkBtn" style="white-space:nowrap;">Copy Link</button>
+          </div>
+        </div>
+
+        <!-- Share buttons -->
+        <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px;">
+          <button class="btn btn-secondary" onclick="shareInviteVia('sms')" style="flex:1; min-width:120px; justify-content:center;">💬 Text Message</button>
+          <button class="btn btn-secondary" onclick="shareInviteVia('email')" style="flex:1; min-width:120px; justify-content:center;">📧 Email</button>
+          <button class="btn btn-secondary" onclick="shareInviteVia('share')" style="flex:1; min-width:120px; justify-content:center;">📤 Share</button>
+        </div>
+
+        <!-- Coming soon note -->
+        <div style="background:#FFF8E1; border:1px solid #FFE082; border-radius:var(--radius-sm); padding:16px; font-size:0.85rem; color:#F57F17; line-height:1.6;">
+          <strong>Coming soon:</strong> Right now, this link takes your family member to a page where they can record their voice. In a future update, their voice will automatically appear in your family voice library. For now, you can also ask them to send you the audio file and upload it yourself using the "Upload a Voice" tab.
+        </div>
+      </div>
+
+      <!-- How it will work -->
+      <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
+        <div style="font-size:0.85rem; font-weight:600; color:var(--text); margin-bottom:12px;">How it works for them:</div>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:140px; text-align:center; padding:16px;">
+            <div style="font-size:2rem; margin-bottom:8px;">1️⃣</div>
+            <div style="font-size:0.8rem; color:var(--text-muted); line-height:1.5;">They tap the link on their phone</div>
+          </div>
+          <div style="flex:1; min-width:140px; text-align:center; padding:16px;">
+            <div style="font-size:2rem; margin-bottom:8px;">2️⃣</div>
+            <div style="font-size:0.8rem; color:var(--text-muted); line-height:1.5;">Read a short passage aloud or upload a recording</div>
+          </div>
+          <div style="flex:1; min-width:140px; text-align:center; padding:16px;">
+            <div style="font-size:2rem; margin-bottom:8px;">3️⃣</div>
+            <div style="font-size:0.8rem; color:var(--text-muted); line-height:1.5;">Their voice appears in your family library</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="panel" id="panel3">
     <div style="margin-bottom:16px;">
       <button class="btn btn-secondary" onclick="goToStep(2)">← Back to Library</button>
@@ -1033,8 +1126,8 @@ function goToStep(n) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById('panel' + n).classList.add('active');
-  // Panel 4 (scanner) shares step 2 highlight
-  const stepN = n === 4 ? 2 : n;
+  // Panel 4 (scanner) and Panel 5 (invite) share step 2 highlight
+  const stepN = (n === 4 || n === 5) ? 2 : n;
   document.getElementById('step' + stepN).classList.add('active');
   for (let i = 1; i < stepN; i++) {
     document.getElementById('step' + i).classList.add('completed');
@@ -1451,6 +1544,85 @@ async function readScannedText() {
     status.textContent = '❌ ' + err.message;
     btn.textContent = '▶ Read This Page Aloud';
     btn.disabled = false;
+  }
+}
+
+// ===== INVITE FAMILY =====
+let selectedRelation = '';
+
+function showInvitePanel() {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel5').classList.add('active');
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step2').classList.add('active');
+  document.getElementById('step1').classList.add('completed');
+}
+
+function selectRelation(btn, relation) {
+  selectedRelation = relation;
+  document.querySelectorAll('.invite-rel-btn').forEach(b => {
+    b.style.background = 'var(--bg-card)';
+    b.style.color = 'var(--text-muted)';
+    b.style.borderColor = 'var(--border)';
+  });
+  btn.style.background = 'var(--teal)';
+  btn.style.color = 'white';
+  btn.style.borderColor = 'var(--teal)';
+}
+
+function generateInviteLink() {
+  const name = document.getElementById('inviteName').value.trim() || 'A family member';
+  const message = document.getElementById('inviteMessage').value.trim();
+  const relation = selectedRelation || 'Family';
+
+  // For now, the invite link points to the same app URL with a query param
+  // In the future this would be a unique invite token linked to the user's account
+  const baseUrl = window.location.origin + window.location.pathname;
+  const params = new URLSearchParams({
+    invite: 'true',
+    for: name,
+    relation: relation
+  });
+  const link = baseUrl + '?' + params.toString();
+
+  document.getElementById('inviteLinkDisplay').value = link;
+  document.getElementById('inviteResult').style.display = 'block';
+}
+
+function copyInviteLink() {
+  const link = document.getElementById('inviteLinkDisplay').value;
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = document.getElementById('copyLinkBtn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000);
+  }).catch(() => {
+    // Fallback for older browsers
+    document.getElementById('inviteLinkDisplay').select();
+    document.execCommand('copy');
+  });
+}
+
+function shareInviteVia(method) {
+  const name = document.getElementById('inviteName').value.trim() || 'someone special';
+  const link = document.getElementById('inviteLinkDisplay').value;
+  const message = document.getElementById('inviteMessage').value.trim();
+  const defaultMsg = 'Hi! I\'d love to have your voice read bedtime stories to the kids through Stories Stay. It only takes 60 seconds — just tap this link and record yourself reading a short passage: ' + link;
+  const finalMsg = message ? message + '\n\n' + link : defaultMsg;
+
+  if (method === 'sms') {
+    window.open('sms:?&body=' + encodeURIComponent(finalMsg));
+  } else if (method === 'email') {
+    const subject = 'Record your voice for the kids — Stories Stay';
+    window.open('mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(finalMsg));
+  } else if (method === 'share' && navigator.share) {
+    navigator.share({
+      title: 'Stories Stay — Record Your Voice',
+      text: finalMsg,
+      url: link
+    }).catch(() => {});
+  } else {
+    // Fallback — just copy
+    copyInviteLink();
   }
 }
 </script>
